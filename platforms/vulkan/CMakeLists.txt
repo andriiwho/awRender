@@ -1,7 +1,7 @@
 add_library(awVulkanPlatform STATIC)
 
 find_package(Vulkan REQUIRED)
-target_link_libraries(awVulkanPlatform PUBLIC Vulkan::Vulkan)
+target_link_libraries(awVulkanPlatform PUBLIC Vulkan::Vulkan aw::Render fmt::fmt PRIVATE glfw)
 
 file(GLOB_RECURSE vulkanFiles *.h *.cpp *.inl LIST_DIRECTORIES ON)
 target_sources(awVulkanPlatform PRIVATE ${vulkanFiles})
