@@ -10,6 +10,7 @@ namespace aw::render
 {
 	/** set to true before creating the first device to enable GPU validation */
 	extern bool g_enable_gpu_validation;
+	extern bool g_enable_verbose_render_api_logging;
 
 	enum class DeviceManagerAPI
 	{

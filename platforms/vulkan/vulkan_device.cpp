@@ -4,10 +4,17 @@
 #include "GLFW/glfw3.h"
 #include "aw/render/system/device_manager_interface.h"
 
+#include <ranges>
 #include <fmt/printf.h>
 
 namespace aw::render
 {
+	static constexpr std::array s_required_device_extensions = {
+		VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+		VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME,
+		VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME
+	};
+
 	namespace utils
 	{
 		static bool is_valid_instance_extension(const char* extension, bool clear = false)
@@ -54,6 +61,7 @@ namespace aw::render
 		window->create_surface(m_Instance);
 		m_CreatedSurfaces.push_back(window->get_surface());
 		pick_physical_device(window);
+		create_device();
 	}
 
 	VulkanDevice::~VulkanDevice()
@@ -102,7 +110,12 @@ namespace aw::render
 				debug_messenger_create_info = vk::DebugUtilsMessengerCreateInfoEXT();
 				debug_messenger_create_info->setPfnUserCallback(debug::vulkan_validation_callback)
 					.setMessageType(eGeneral | eValidation | ePerformance)
-					.setMessageSeverity(eError | eWarning | eInfo);
+					.setMessageSeverity(eError | eWarning);
+
+				if (g_enable_verbose_render_api_logging)
+				{
+					debug_messenger_create_info->messageSeverity |= eInfo;
+				}
 
 				const vk::DebugUtilsMessengerCreateInfoEXT& debug_messenger_create_info_ptr = debug_messenger_create_info.value();
 				create_info.setPNext(&debug_messenger_create_info_ptr);
@@ -116,7 +129,7 @@ namespace aw::render
 			create_info.setPEnabledLayerNames(validation_layers);
 		}
 
-		// Set extensions here, because we need to ensure that the debug extension is added.
+		// Set extensions here because we need to ensure that the debug extension is added.
 		create_info.setPEnabledExtensionNames(extensions);
 
 		m_Instance = m_Context.createInstance(create_info);
@@ -139,7 +152,7 @@ namespace aw::render
 		{
 			// Check for bindless
 			const auto features = physical_device.getFeatures2<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceDescriptorIndexingFeatures>();
-			const vk::PhysicalDeviceDescriptorIndexingFeatures& di_features = features.get<vk::PhysicalDeviceDescriptorIndexingFeatures>();
+			const auto& di_features = features.get<vk::PhysicalDeviceDescriptorIndexingFeatures>();
 
 #define check_bool(b)   \
 	if (!di_features.b) \
@@ -152,11 +165,30 @@ namespace aw::render
 			check_bool(descriptorBindingStorageBufferUpdateAfterBind);
 #undef check_bool
 
+			bool all_extensions_supported = true;
+			const auto supported_extensions = physical_device.enumerateDeviceExtensionProperties();
+			for (const char* extension : s_required_device_extensions)
+			{
+				const auto supports_extension = [&supported_extensions, extension] -> bool {
+					return std::ranges::find_if(supported_extensions, [extension](const auto& ext) { return strcmp(ext.extensionName, extension) == 0; }) != supported_extensions.end();
+				};
+
+				if (!supports_extension())
+				{
+					all_extensions_supported = false;
+				}
+			}
+
+			if (!all_extensions_supported)
+			{
+				continue;
+			}
+
 			for (const auto queue_family_properties = physical_device.getQueueFamilyProperties(); const auto& queue_family_property : queue_family_properties)
 			{
 				if (queue_family_property.queueFlags & vk::QueueFlagBits::eGraphics)
 				{
-					if (const auto surface_formats = physical_device.getSurfaceFormatsKHR(window->get_surface()); surface_formats.size() > 0)
+					if (const auto surface_formats = physical_device.getSurfaceFormatsKHR(window->get_surface()); !surface_formats.empty())
 					{
 						m_PhysicalDevice = physical_device;
 						break;
@@ -175,9 +207,46 @@ namespace aw::render
 		{
 			throw std::runtime_error("Failed to find a suitable GPU!");
 		}
+
+		// Collect queue family indices
+		for (const auto queue_families = m_PhysicalDevice.getQueueFamilyProperties();
+			const auto& [index, family] : std::ranges::views::enumerate(queue_families))
+		{
+			if (family.queueFlags & vk::QueueFlagBits::eGraphics)
+			{
+				m_GraphicsQueueIndex = index;
+			}
+
+			// TODO: No compute queue for now
+			if (has_valid_queue_indices())
+			{
+				break;
+			}
+		}
 	}
-	
+
 	void VulkanDevice::create_device()
 	{
+		core::Vector<vk::DeviceQueueCreateInfo> queue_create_infos{};
+		for (const std::array queue_indices = { m_GraphicsQueueIndex };
+			const auto queue_index : queue_indices)
+		{
+			static float priority = 1.0f;
+			const auto queue_create_info = vk::DeviceQueueCreateInfo()
+											   .setPQueuePriorities(&priority)
+											   .setQueueFamilyIndex(queue_index)
+											   .setQueueCount(1);
+			queue_create_infos.push_back(queue_create_info);
+		}
+
+		const auto features = m_PhysicalDevice.getFeatures2<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceDescriptorIndexingFeatures>();
+
+
+		const auto create_info = vk::DeviceCreateInfo()
+									 .setPNext(&features)
+									 .setQueueCreateInfoCount(1)
+									 .setQueueCreateInfos(queue_create_infos)
+									 .setPEnabledExtensionNames(s_required_device_extensions);
+		m_Device = m_PhysicalDevice.createDevice(create_info);
 	}
 } // namespace aw::render

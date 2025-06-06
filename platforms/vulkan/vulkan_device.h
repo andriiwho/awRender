@@ -12,6 +12,8 @@ namespace aw::render
 		explicit VulkanDevice(VulkanWindow* window);
 		~VulkanDevice() override;
 
+		bool has_valid_queue_indices() const { return m_GraphicsQueueIndex != UINT32_MAX; }
+
 	private:
 		void init_vulkan_instance();
 		void pick_physical_device(const VulkanWindow* window);
@@ -24,5 +26,7 @@ namespace aw::render
 
 		vk::raii::PhysicalDevice m_PhysicalDevice{nullptr};
 		vk::raii::Device m_Device{nullptr};
+
+		core::u32 m_GraphicsQueueIndex = UINT32_MAX;
 	};
 }

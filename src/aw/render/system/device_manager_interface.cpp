@@ -8,6 +8,7 @@
 namespace aw::render
 {
 	bool g_enable_gpu_validation = false;
+	bool g_enable_verbose_render_api_logging = false;
 
 	static IDeviceManagerInterface* s_Instance = nullptr;
 
