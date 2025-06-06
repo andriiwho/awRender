@@ -1,0 +1,5 @@
+find_package(Vulkan QUIET)
+if(Vulkan_FOUND)
+    set(AW_VULKAN_SUPPORTED ON CACHE BOOL "")
+    add_subdirectory(vulkan)
+endif()

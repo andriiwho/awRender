@@ -1,0 +1,3 @@
+#pragma once
+
+#cmakedefine AW_VULKAN_SUPPORTED
