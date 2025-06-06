@@ -33,4 +33,15 @@ namespace aw::render
 		}
 		m_Surface = vk::SurfaceKHR(c_surface);
 	}
+
+	bool VulkanWindow::should_close() const
+	{
+		if (m_Window)
+		{
+			return glfwWindowShouldClose(m_Window) == GLFW_TRUE;
+		}
+
+		// If we have no window, it means it's either closed or wasn't opened at all. Hence...
+		return true;
+	}
 } // namespace aw::render

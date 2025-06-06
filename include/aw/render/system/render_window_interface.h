@@ -15,5 +15,7 @@ namespace aw::render
 	{
 	public:
 		virtual ~IRenderWindowInterface() = default;
+
+		virtual bool should_close() const = 0;
 	};
 }

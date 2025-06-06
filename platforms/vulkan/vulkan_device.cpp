@@ -66,6 +66,8 @@ namespace aw::render
 
 	VulkanDevice::~VulkanDevice()
 	{
+		m_Device.waitIdle();
+
 		for (const auto& surface : m_CreatedSurfaces)
 		{
 			(*m_Instance).destroySurfaceKHR(surface, nullptr);
@@ -240,13 +242,16 @@ namespace aw::render
 		}
 
 		const auto features = m_PhysicalDevice.getFeatures2<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceDescriptorIndexingFeatures>();
-
-
 		const auto create_info = vk::DeviceCreateInfo()
 									 .setPNext(&features)
 									 .setQueueCreateInfoCount(1)
 									 .setQueueCreateInfos(queue_create_infos)
 									 .setPEnabledExtensionNames(s_required_device_extensions);
 		m_Device = m_PhysicalDevice.createDevice(create_info);
+
+		for (const char* extension : s_required_device_extensions)
+		{
+			fmt::println("(awRender) -- Device extension {} enabled.", extension);
+		}
 	}
 } // namespace aw::render

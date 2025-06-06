@@ -13,6 +13,11 @@ namespace aw::render
 
 	IRenderWindowInterface* VulkanDeviceManager::create_device_and_window(const RenderWindowCreateInfo& create_info, IRenderDeviceInterface** out_render_device_opt)
 	{
+		if (m_Device)
+		{
+			throw std::runtime_error("Device already created. Cannot create another device.");
+		}
+
 		if (!s_GlfwInitialized)
 		{
 			if (const core::i32 result = glfwInit(); result != GLFW_TRUE)
@@ -33,5 +38,10 @@ namespace aw::render
 		}
 
 		return out_window;
+	}
+
+	void VulkanDeviceManager::poll_os_events() const
+	{
+		glfwPollEvents();
 	}
 } // namespace aw::render

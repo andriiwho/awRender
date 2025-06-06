@@ -29,5 +29,7 @@ namespace aw::render
 		static void shutdown();
 
 		virtual IRenderWindowInterface* create_device_and_window(const RenderWindowCreateInfo& create_info, IRenderDeviceInterface** out_device_opt) = 0;
+
+		virtual void poll_os_events() const = 0;
 	};
 }

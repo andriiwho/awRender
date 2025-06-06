@@ -16,6 +16,8 @@ namespace aw::render
 		void create_surface(vk::Instance instance);
 		vk::SurfaceKHR get_surface() const { return m_Surface; }
 
+		bool should_close() const override;
+
 	private:
 		GLFWwindow* m_Window{};
 		vk::SurfaceKHR m_Surface{};

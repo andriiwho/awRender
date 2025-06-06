@@ -14,6 +14,8 @@ namespace aw::render
 
 		IRenderWindowInterface* create_device_and_window(const RenderWindowCreateInfo& create_info, IRenderDeviceInterface** out_render_device_opt) override;
 
+		void poll_os_events() const override;
+
 	private:
 		core::RefPtr<VulkanDevice> m_Device;
 	};
