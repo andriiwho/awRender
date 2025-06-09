@@ -13,6 +13,8 @@ namespace aw::render
 		: m_AssociatedWindow(associated_window)
 	{
 		create_swap_chain();
+
+		m_ImageAvailableSemaphore = g_vulkan_device->get_device().createSemaphore({});
 	}
 
 	VulkanSwapChain::~VulkanSwapChain()

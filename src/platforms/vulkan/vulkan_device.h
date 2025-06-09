@@ -23,6 +23,8 @@ namespace aw::render
 
 		ISwapChain* create_swap_chain(const IRenderWindowInterface& window) override;
 
+		core::u32 get_graphics_queue_index() const { return m_GraphicsQueueIndex; }
+
 	private:
 		void init_vulkan_instance();
 		void pick_physical_device(const VulkanWindow* window);

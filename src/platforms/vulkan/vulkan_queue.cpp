@@ -29,14 +29,19 @@ namespace aw::render
 		const core::u32 image_index = vulkan_swap_chain->get_current_image_index();
 
 		const auto present_info = vk::PresentInfoKHR()
-								.setSwapchains(handle)
-								.setImageIndices(image_index)
-								.setWaitSemaphores(m_PresentWaitSemaphores);
+									  .setSwapchains(handle)
+									  .setImageIndices(image_index)
+									  .setWaitSemaphores(m_PresentWaitSemaphores);
 		if (const vk::Result result = m_Queue.presentKHR(present_info); result != vk::Result::eSuccess)
 		{
 			throw std::runtime_error("Failed to present swap chain");
 		}
 
 		m_PresentWaitSemaphores.clear();
+	}
+
+	void VulkanDeviceQueue::submit(IDeviceCommandList* command_list)
+	{
+		// TODO: Figure out where to get wait and signal semaphores
 	}
 } // namespace aw::render

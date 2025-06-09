@@ -16,6 +16,8 @@ namespace aw::render
 		void set_signal_fence_on_submit(IDeviceFence* fence) override;
 		void present_swap_chain(ISwapChain* swap_chain) override;
 
+		void submit(IDeviceCommandList* command_list) override;
+
 	private:
 		vk::Queue m_Queue;
 		core::u32 m_QueueFamilyIndex;
