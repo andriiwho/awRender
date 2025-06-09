@@ -11,6 +11,14 @@ namespace aw::render
 {
 	static bool s_GlfwInitialized = false;
 
+	VulkanDeviceManager::~VulkanDeviceManager()
+	{
+		if (s_GlfwInitialized)
+		{
+			glfwTerminate();
+		}
+	}
+
 	IRenderWindowInterface* VulkanDeviceManager::create_device_and_window(const RenderWindowCreateInfo& create_info, IRenderDeviceInterface** out_render_device_opt)
 	{
 		if (m_Device)
@@ -43,5 +51,10 @@ namespace aw::render
 	void VulkanDeviceManager::poll_os_events() const
 	{
 		glfwPollEvents();
+	}
+
+	IRenderDeviceInterface* VulkanDeviceManager::get_device() const
+	{
+		return m_Device.get();
 	}
 } // namespace aw::render

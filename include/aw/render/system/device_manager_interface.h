@@ -25,10 +25,20 @@ namespace aw::render
 	public:
 		virtual ~IDeviceManagerInterface() = default;
 
-		static IDeviceManagerInterface* get_or_create(DeviceManagerAPI api = DeviceManagerAPI::Default);
+		[[nodiscard]] static IDeviceManagerInterface* get_or_create(DeviceManagerAPI api = DeviceManagerAPI::Default);
 		static void shutdown();
 
-		virtual IRenderWindowInterface* create_device_and_window(const RenderWindowCreateInfo& create_info, IRenderDeviceInterface** out_device_opt) = 0;
+		/**
+		 * Initialize the rendering device interface and create a window to use it in.
+		 * The created window is considered as the main window.
+		 * This function should only be called once.
+		 * @param create_info create info with window specification.
+		 * @param out_device_opt Pointer to where to store the created device handle. Optional.
+		 * @return
+		 */
+		[[nodiscard]] virtual IRenderWindowInterface* create_device_and_window(const RenderWindowCreateInfo& create_info, IRenderDeviceInterface** out_device_opt) = 0;
+
+		[[nodiscard]] virtual IRenderDeviceInterface* get_device() const = 0;
 
 		virtual void poll_os_events() const = 0;
 	};
