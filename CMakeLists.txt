@@ -19,6 +19,11 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINAR
 configure_file(src/aw/render/aw_render_checks.h.in ${CMAKE_CURRENT_BINARY_DIR}/generated/aw/render/misc/aw_render_checks.h)
 target_include_directories(awRender PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/generated)
 
-if(AW_VULKAN_SUPPORTED)
+if (AW_VULKAN_SUPPORTED)
     target_link_libraries(awRender PUBLIC awVulkanPlatform)
-endif()
+endif ()
+
+option(AWRENDER_INCLUDE_TESTBED "Whether to include the testbed project in the build" ON)
+if (AWRENDER_INCLUDE_TESTBED)
+    add_subdirectory(testbed)
+endif ()
