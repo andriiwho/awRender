@@ -1,5 +1,7 @@
 #include "vulkan_device.h"
 
+#include "vulkan_fence.h"
+#include "vulkan_queue.h"
 #include "vulkan_window.h"
 #include "GLFW/glfw3.h"
 #include "aw/render/system/device_manager_interface.h"
@@ -74,6 +76,34 @@ namespace aw::render
 		}
 
 		fmt::println("(awRender) vulkan device destroyed.");
+	}
+
+	IDeviceQueue* VulkanDevice::create_device_queue(DeviceQueueType queue_type)
+	{
+		core::u32 queue_index = 0;
+		switch (queue_type)
+		{
+			case DeviceQueueType::graphics:
+				queue_index = m_GraphicsQueueIndex;
+				break;
+			default:
+				throw std::runtime_error("Unsupported queue type!");
+		}
+
+		try
+		{
+			return aw_new VulkanDeviceQueue(m_Device.getQueue(queue_index, 0), queue_index, queue_type);
+		}
+		catch (const std::exception& e)
+		{
+			fmt::println("(awRender) Failed to create device queue: {}", e.what());
+			return nullptr;
+		}
+	}
+
+	IDeviceFence* VulkanDevice::create_fence()
+	{
+		return aw_new VulkanFence(m_Device);
 	}
 
 	void VulkanDevice::init_vulkan_instance()

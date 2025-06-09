@@ -14,6 +14,9 @@ namespace aw::render
 
 		bool has_valid_queue_indices() const { return m_GraphicsQueueIndex != UINT32_MAX; }
 
+		IDeviceQueue* create_device_queue(DeviceQueueType queue_type) override;
+		IDeviceFence* create_fence() override;
+
 	private:
 		void init_vulkan_instance();
 		void pick_physical_device(const VulkanWindow* window);

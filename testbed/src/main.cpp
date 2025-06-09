@@ -2,25 +2,31 @@
 #include <aw/render/all.h>
 
 using namespace aw;
+using namespace aw::core;
+using namespace aw::render;
 
-core::i32 main()
+i32 main()
 {
 	aw_init_global_thread_pool_scoped();
-	render::g_enable_gpu_validation = true;
+	g_enable_gpu_validation = true;
+	g_enable_verbose_render_api_logging = false;
 
-	render::IDeviceManagerInterface* device_manager = aw::render::IDeviceManagerInterface::get_or_create();
+	IDeviceManagerInterface* device_manager = aw::render::IDeviceManagerInterface::get_or_create();
 	defer[]
 	{
-		render::IDeviceManagerInterface::shutdown();
+		IDeviceManagerInterface::shutdown();
 	};
 
-	render::IRenderDeviceInterface* device = nullptr;
-	const render::IRenderWindowInterface* window = device_manager->create_device_and_window(render::RenderWindowCreateInfo{ 1280, 720, "awRender" }, &device);
-	defer[device]
+	RefPtr<IRenderDeviceInterface> device = nullptr;
+	const IRenderWindowInterface* window = device_manager->create_device_and_window(RenderWindowCreateInfo{ 1280, 720, "awRender" }, &device);
+
+	const RefPtr queue = device->create_device_queue(render::DeviceQueueType::graphics);
+	if (!queue)
 	{
-		device->release();
-	};
+		return -1;
+	}
 
+	const RefPtr fence = device->create_fence();
 	while (true)
 	{
 		device_manager->poll_os_events();
@@ -28,6 +34,8 @@ core::i32 main()
 		{
 			break;
 		}
+
+		queue->set_signal_fence_on_submit(fence);
 	}
 
 	return 0;
