@@ -27,6 +27,8 @@ i32 main()
 	}
 
 	const RefPtr fence = device->create_fence();
+	const RefPtr swap_chain = device->create_swap_chain(*window);
+
 	while (true)
 	{
 		device_manager->poll_os_events();

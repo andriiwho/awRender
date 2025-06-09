@@ -17,6 +17,12 @@ namespace aw::render
 		IDeviceQueue* create_device_queue(DeviceQueueType queue_type) override;
 		IDeviceFence* create_fence() override;
 
+		const vk::raii::Device& get_device() const { return m_Device; }
+		const vk::raii::Instance& get_instance() const { return m_Instance; }
+		const vk::raii::PhysicalDevice& get_physical_device() const { return m_PhysicalDevice; }
+
+		ISwapChain* create_swap_chain(const IRenderWindowInterface& window) override;
+
 	private:
 		void init_vulkan_instance();
 		void pick_physical_device(const VulkanWindow* window);

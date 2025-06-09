@@ -8,3 +8,5 @@
 #include "aw/render/api/device_interface.h"
 #include "aw/render/api/device_queue.h"
 #include "aw/render/api/device_fence.h"
+#include "aw/render/api/render_state.h"
+#include "aw/render/api/swap_chain.h"

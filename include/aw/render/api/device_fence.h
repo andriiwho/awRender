@@ -6,5 +6,7 @@ namespace aw::render
 {
 	class IDeviceFence : public core::IntrusiveRefCounted
 	{
+	public:
+		virtual void wait() = 0;
 	};
 }

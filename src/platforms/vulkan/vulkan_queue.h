@@ -14,6 +14,7 @@ namespace aw::render
 		~VulkanDeviceQueue() override;
 
 		void set_signal_fence_on_submit(IDeviceFence* fence) override;
+		void present_swap_chain(ISwapChain* swap_chain) override;
 
 	private:
 		vk::Queue m_Queue;
@@ -21,5 +22,6 @@ namespace aw::render
 		DeviceQueueType m_QueueType;
 
 		core::RefPtr<IDeviceFence> m_SignalFence = nullptr;
+		core::Vector<vk::Semaphore> m_PresentWaitSemaphores{};
 	};
 }

@@ -6,6 +6,8 @@ namespace aw::render
 {
 	class IDeviceFence;
 	class IDeviceQueue;
+	class ISwapChain;
+	class IRenderWindowInterface;
 
 	enum class DeviceQueueType : core::u8
 	{
@@ -17,5 +19,6 @@ namespace aw::render
 	public:
 		virtual IDeviceQueue* create_device_queue(DeviceQueueType queue_type) = 0;
 		virtual IDeviceFence* create_fence() = 0;
+		virtual ISwapChain* create_swap_chain(const IRenderWindowInterface& window) = 0;
 	};
 }

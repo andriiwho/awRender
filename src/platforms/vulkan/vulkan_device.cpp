@@ -2,6 +2,7 @@
 
 #include "vulkan_fence.h"
 #include "vulkan_queue.h"
+#include "vulkan_swap_chain.h"
 #include "vulkan_window.h"
 #include "GLFW/glfw3.h"
 #include "aw/render/system/device_manager_interface.h"
@@ -57,6 +58,7 @@ namespace aw::render
 
 	VulkanDevice::VulkanDevice(VulkanWindow* window)
 	{
+		g_vulkan_device = this;
 		fmt::println("(awRender) creating vulkan device...");
 
 		init_vulkan_instance();
@@ -104,6 +106,19 @@ namespace aw::render
 	IDeviceFence* VulkanDevice::create_fence()
 	{
 		return aw_new VulkanFence(m_Device);
+	}
+
+	ISwapChain* VulkanDevice::create_swap_chain(const IRenderWindowInterface& window)
+	{
+		try
+		{
+			return aw_new VulkanSwapChain(static_cast<const VulkanWindow&>(window));
+		}
+		catch (const std::exception& e)
+		{
+			fmt::println("(awRender) Failed to create swap chain: {}", e.what());
+			return nullptr;
+		}
 	}
 
 	void VulkanDevice::init_vulkan_instance()
