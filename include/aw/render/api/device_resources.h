@@ -58,6 +58,9 @@ namespace aw::render
 
 		const DeviceBufferCreateInfo& get_create_info() const { return m_CreateInfo; }
 
+		virtual void* map() = 0;
+		virtual void unmap() = 0;
+
 	private:
 		DeviceBufferCreateInfo m_CreateInfo{};
 	};

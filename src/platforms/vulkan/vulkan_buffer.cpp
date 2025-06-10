@@ -69,8 +69,41 @@ namespace aw::render
 	{
 		if (m_Allocation)
 		{
+			unmap();
+
 			vmaFreeMemory(g_vulkan_device->get_allocator(), m_Allocation);
 			m_Allocation = nullptr;
 		}
+	}
+
+	void* VulkanBuffer::map()
+	{
+		if (!get_create_info().usage.contains(DeviceBufferUsage::random_access) && !get_create_info().usage.contains(DeviceBufferUsage::sequential_write))
+		{
+			throw std::runtime_error("Unable to map buffer. It should be created with sequential_write or random_access usage flags.");
+		}
+
+		if (m_MappedMemory)
+		{
+			return m_MappedMemory;
+		}
+
+		if (const VkResult result = vmaMapMemory(g_vulkan_device->get_allocator(), m_Allocation, &m_MappedMemory); result != VK_SUCCESS)
+		{
+			throw std::runtime_error("Failed to map memory for buffer");
+		}
+
+		return m_MappedMemory;
+	}
+
+	void VulkanBuffer::unmap()
+	{
+		if (!m_MappedMemory)
+		{
+			return;
+		}
+
+		vmaUnmapMemory(g_vulkan_device->get_allocator(), m_Allocation);
+		m_MappedMemory = nullptr;
 	}
 } // namespace aw::render

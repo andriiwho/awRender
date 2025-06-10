@@ -48,7 +48,7 @@ i32 main()
 		}
 	};
 
-	Vertex vertices[] = {
+	constexpr Vertex vertices[] = {
 		{ { 0.0f, 0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
 		{ { -0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
 		{ { 0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
@@ -60,6 +60,11 @@ i32 main()
 		.usage = DeviceBufferUsage::vertex | DeviceBufferUsage::sequential_write,
 	};
 	const RefPtr vertex_buffer = device->create_buffer(std::move(vertex_buffer_info));
+
+	if (void* mapped_vb = vertex_buffer->map())
+	{
+		memcpy(mapped_vb, vertices, sizeof(vertices));
+	}
 
 	u32 current_frame = 0;
 	while (true)

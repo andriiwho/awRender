@@ -15,8 +15,13 @@ namespace aw::render
 
 		vk::Buffer get_handle() const { return m_Buffer; }
 
+		void* map() override;
+		void unmap() override;
+
 	private:
 		VmaAllocation m_Allocation{};
 		vk::raii::Buffer m_Buffer{nullptr};
+
+		void* m_MappedMemory{};
 	};
 }
