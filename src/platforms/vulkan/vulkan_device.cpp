@@ -1,5 +1,7 @@
+#define VMA_IMPLEMENTATION
 #include "vulkan_device.h"
 
+#include "vulkan_buffer.h"
 #include "vulkan_command_list.h"
 #include "vulkan_fence.h"
 #include "vulkan_frame.h"
@@ -69,11 +71,17 @@ namespace aw::render
 		m_CreatedSurfaces.push_back(window->get_surface());
 		pick_physical_device(window);
 		create_device();
+		init_allocator();
 	}
 
 	VulkanDevice::~VulkanDevice()
 	{
 		m_Device.waitIdle();
+
+		if (m_Allocator)
+		{
+			vmaDestroyAllocator(m_Allocator);
+		}
 
 		for (const auto& surface : m_CreatedSurfaces)
 		{
@@ -116,6 +124,11 @@ namespace aw::render
 		return aw_new VulkanCommandList;
 	}
 
+	DeviceBuffer* VulkanDevice::create_buffer(DeviceBufferCreateInfo&& create_info)
+	{
+		return aw_new VulkanBuffer(std::move(create_info));
+	}
+
 	ISwapChain* VulkanDevice::create_swap_chain(const IRenderWindowInterface& window)
 	{
 		try
@@ -146,7 +159,7 @@ namespace aw::render
 									  .setApplicationVersion(VK_MAKE_API_VERSION(0, 1, 0, 0))
 									  .setPEngineName("awRender")
 									  .setEngineVersion(VK_MAKE_API_VERSION(0, 1, 0, 0))
-									  .setApiVersion(VK_API_VERSION_1_3);
+									  .setApiVersion(m_ApiVersion);
 
 		core::Vector<const char*> extensions{};
 
@@ -234,7 +247,7 @@ namespace aw::render
 			const auto supported_extensions = physical_device.enumerateDeviceExtensionProperties();
 			for (const char* extension : s_required_device_extensions)
 			{
-				const auto supports_extension = [&supported_extensions, extension] -> bool {
+				const auto supports_extension = [&supported_extensions, extension] {
 					return std::ranges::find_if(supported_extensions, [extension](const auto& ext) { return strcmp(ext.extensionName, extension) == 0; }) != supported_extensions.end();
 				};
 
@@ -316,5 +329,21 @@ namespace aw::render
 		{
 			fmt::println("(awRender) -- Device extension {} enabled.", extension);
 		}
+	}
+
+	void VulkanDevice::init_allocator()
+	{
+		const VmaAllocatorCreateInfo allocator_info{
+			.physicalDevice = *m_PhysicalDevice,
+			.device = *m_Device,
+			.instance = *m_Instance,
+			.vulkanApiVersion = m_ApiVersion,
+		};
+		if (const VkResult result = vmaCreateAllocator(&allocator_info, &m_Allocator); result != VK_SUCCESS)
+		{
+			throw std::runtime_error("Failed to create vma allocator!");
+		}
+
+		fmt::println("(awRender) vma allocator created successfully.");
 	}
 } // namespace aw::render

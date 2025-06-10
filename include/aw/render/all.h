@@ -12,3 +12,4 @@
 #include "aw/render/api/swap_chain.h"
 #include "aw/render/api/frame_context.h"
 #include "aw/render/api/command_list.h"
+#include "aw/render/api/device_resources.h"

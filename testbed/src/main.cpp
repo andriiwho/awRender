@@ -8,6 +8,12 @@ using namespace aw;
 using namespace aw::core;
 using namespace aw::render;
 
+struct Vertex
+{
+	Vector3 position;
+	Vector3 color;
+};
+
 i32 main()
 {
 	aw_init_global_thread_pool_scoped();
@@ -34,12 +40,26 @@ i32 main()
 
 	constexpr u32 num_frames_in_flight = 3;
 	const auto frame_contexts = device->create_frame_contexts<num_frames_in_flight>();
-	defer[&frame_contexts] {
+	defer[&frame_contexts]
+	{
 		for (auto& frame_context : frame_contexts)
 		{
 			frame_context->release();
 		}
 	};
+
+	Vertex vertices[] = {
+		{ { 0.0f, 0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
+		{ { -0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
+		{ { 0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+	};
+
+	DeviceBufferCreateInfo vertex_buffer_info{
+		.debug_name = "test_vb",
+		.size_in_bytes = sizeof(vertices),
+		.usage = DeviceBufferUsage::vertex | DeviceBufferUsage::sequential_write,
+	};
+	const RefPtr vertex_buffer = device->create_buffer(std::move(vertex_buffer_info));
 
 	u32 current_frame = 0;
 	while (true)

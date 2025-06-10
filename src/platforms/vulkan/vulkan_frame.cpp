@@ -20,6 +20,6 @@ namespace aw::render
 
 	IDeviceCommandList* VulkanFrame::cmd() const
 	{
-		return m_CommandList;
+		return m_CommandList.get();
 	}
 } // namespace aw::render

@@ -3,6 +3,8 @@
 #include "vulkan_common.h"
 #include "aw/render/api/device_interface.h"
 
+#include "vk_mem_alloc.h"
+
 namespace aw::render
 {
 	class VulkanWindow;
@@ -17,6 +19,7 @@ namespace aw::render
 		IDeviceQueue* create_device_queue(DeviceQueueType queue_type) override;
 		IDeviceFence* create_fence() override;
 		IDeviceCommandList* create_command_list() override;
+		DeviceBuffer* create_buffer(DeviceBufferCreateInfo&& create_info) override;
 
 		const vk::raii::Device& get_device() const { return m_Device; }
 		const vk::raii::Instance& get_instance() const { return m_Instance; }
@@ -28,11 +31,15 @@ namespace aw::render
 		IFrameContext* create_frame_context() override;
 
 		void wait_idle() override;
+		VmaAllocator get_allocator() const { return m_Allocator; }
 
 	private:
 		void init_vulkan_instance();
 		void pick_physical_device(const VulkanWindow* window);
 		void create_device();
+		void init_allocator();
+
+		static constexpr core::u32 m_ApiVersion = VK_API_VERSION_1_1;
 
 		vk::raii::Context m_Context{};
 		vk::raii::Instance m_Instance{nullptr};
@@ -43,5 +50,7 @@ namespace aw::render
 		vk::raii::Device m_Device{nullptr};
 
 		core::u32 m_GraphicsQueueIndex = UINT32_MAX;
+
+		VmaAllocator m_Allocator{};
 	};
 }
