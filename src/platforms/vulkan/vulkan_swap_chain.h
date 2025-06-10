@@ -11,7 +11,6 @@ namespace aw::render
 
 	extern vk::Format g_preferred_swap_chain_format;
 	extern vk::Format g_fallback_swap_chain_image_format;
-	extern bool g_swap_chain_vsync_enabled;
 
 	class VulkanSwapChain final : public ISwapChain
 	{

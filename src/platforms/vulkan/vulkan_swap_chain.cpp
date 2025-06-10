@@ -9,7 +9,6 @@ namespace aw::render
 {
 	vk::Format g_preferred_swap_chain_format = vk::Format::eB8G8R8A8Unorm;
 	vk::Format g_fallback_swap_chain_format = vk::Format::eR8G8B8A8Unorm;
-	bool g_swap_chain_vsync_enabled = false;
 
 	VulkanSwapChain::VulkanSwapChain(const VulkanWindow& associated_window)
 		: m_AssociatedWindow(associated_window)
@@ -72,24 +71,9 @@ namespace aw::render
 		static vk::PresentModeKHR choose_swap_chain_present_mode(const vk::SurfaceKHR surface)
 		{
 			const auto present_modes = g_vulkan_device->get_physical_device().getSurfacePresentModesKHR(surface);
-			if (g_swap_chain_vsync_enabled)
+			if (const auto iter = std::ranges::find_if(present_modes, [](const auto& mode) { return mode == vk::PresentModeKHR::eMailbox; }); iter != present_modes.end())
 			{
-				if (const auto iter = std::ranges::find_if(present_modes, [](const auto& mode) { return mode == vk::PresentModeKHR::eMailbox; }); iter != present_modes.end())
-				{
-					return *iter;
-				}
-
-				if (const auto iter = std::ranges::find_if(present_modes, [](const auto& mode) { return mode == vk::PresentModeKHR::eFifo; }); iter != present_modes.end())
-				{
-					return *iter;
-				}
-			}
-			else
-			{
-				if (const auto iter = std::ranges::find_if(present_modes, [](const auto& mode) { return mode == vk::PresentModeKHR::eFifoRelaxed; }); iter != present_modes.end())
-				{
-					return *iter;
-				}
+				return *iter;
 			}
 
 			return vk::PresentModeKHR::eFifo;

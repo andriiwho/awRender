@@ -6,6 +6,8 @@ namespace aw::render
 {
 	class IFrameContext;
 
+	extern bool g_swap_chain_vsync_enabled;
+
 	class ISwapChain : public core::IntrusiveRefCounted
 	{
 	public:
