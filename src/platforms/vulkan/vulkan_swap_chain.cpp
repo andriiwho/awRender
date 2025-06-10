@@ -70,6 +70,8 @@ namespace aw::render
 
 		static vk::PresentModeKHR choose_swap_chain_present_mode(const vk::SurfaceKHR surface)
 		{
+			// TODO: There is a problem when vk::PresentModeKHR::eFifo is set. Need to find a better strategy for storing semaphores. For now only Mailbox will be supported.
+
 			const auto present_modes = g_vulkan_device->get_physical_device().getSurfacePresentModesKHR(surface);
 			if (const auto iter = std::ranges::find_if(present_modes, [](const auto& mode) { return mode == vk::PresentModeKHR::eMailbox; }); iter != present_modes.end())
 			{
