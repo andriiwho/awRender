@@ -13,10 +13,9 @@ namespace aw::render
 		VulkanDeviceQueue(vk::Queue queue, core::u32 queue_family_index, DeviceQueueType queue_type);
 		~VulkanDeviceQueue() override;
 
-		void set_signal_fence_on_submit(IDeviceFence* fence) override;
 		void present_swap_chain(ISwapChain* swap_chain) override;
 
-		void submit(IDeviceCommandList* command_list) override;
+		void submit(IDeviceCommandList* command_list, IDeviceFence* fence_to_signal) override;
 
 	private:
 		vk::Queue m_Queue;

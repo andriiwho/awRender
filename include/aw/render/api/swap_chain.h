@@ -6,7 +6,5 @@ namespace aw::render
 {
 	class ISwapChain : public core::IntrusiveRefCounted
 	{
-	public:
-
 	};
 }

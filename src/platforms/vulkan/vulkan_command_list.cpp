@@ -15,9 +15,6 @@ namespace aw::render
 			vk::CommandBufferAllocateInfo()
 				.setCommandBufferCount(1)
 				.setLevel(vk::CommandBufferLevel::ePrimary));
-
-		// Create semaphore
-		m_BufferSemaphore = g_vulkan_device->get_device().createSemaphore({});
 	}
 
 	VulkanCommandList::~VulkanCommandList()
@@ -29,8 +26,6 @@ namespace aw::render
 		// Reset command buffer
 		current().reset();
 
-		m_SwapChainSemaphores.clear();
-
 		constexpr auto begin_info = vk::CommandBufferBeginInfo();
 		current().begin(begin_info);
 	}
@@ -38,12 +33,5 @@ namespace aw::render
 	void VulkanCommandList::close()
 	{
 		current().end();
-	}
-
-	void VulkanCommandList::lock_swap_chain(ISwapChain* swap_chain)
-	{
-		const auto vk_sc = static_cast<VulkanSwapChain*>(swap_chain);
-		m_SwapChainSemaphores.push_back(vk_sc->get_image_available_semaphore());
-
 	}
 } // namespace aw::render

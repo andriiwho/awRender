@@ -11,9 +11,8 @@ namespace aw::render
 	class IDeviceQueue : public core::IntrusiveRefCounted
 	{
 	public:
-		virtual void set_signal_fence_on_submit(IDeviceFence* fence) = 0;
 		virtual void present_swap_chain(ISwapChain* swap_chain) = 0;
 
-		virtual void submit(IDeviceCommandList* command_list) = 0;
+		virtual void submit(IDeviceCommandList* command_list, IDeviceFence* fence_to_signal) = 0;
 	};
 }

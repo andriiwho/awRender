@@ -6,6 +6,5 @@ namespace aw::render
 {
 	class RenderState : public core::IntrusiveRefCounted
 	{
-
 	};
 }

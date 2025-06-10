@@ -1,5 +1,6 @@
 #include "vulkan_device.h"
 
+#include "vulkan_command_list.h"
 #include "vulkan_fence.h"
 #include "vulkan_queue.h"
 #include "vulkan_swap_chain.h"
@@ -106,6 +107,11 @@ namespace aw::render
 	IDeviceFence* VulkanDevice::create_fence()
 	{
 		return aw_new VulkanFence(m_Device);
+	}
+
+	IDeviceCommandList* VulkanDevice::create_command_list()
+	{
+		return aw_new VulkanCommandList;
 	}
 
 	ISwapChain* VulkanDevice::create_swap_chain(const IRenderWindowInterface& window)

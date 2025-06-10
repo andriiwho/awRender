@@ -22,8 +22,6 @@ namespace aw::render
 		vk::SwapchainKHR get_swap_chain() const { return m_SwapChain; }
 		core::u32 get_current_image_index() const { return m_CurrentImageIndex; }
 
-		vk::Semaphore get_image_available_semaphore() const { return m_ImageAvailableSemaphore; }
-
 	private:
 		void clear_swap_chain();
 		void create_swap_chain();
@@ -36,6 +34,5 @@ namespace aw::render
 		vk::PresentModeKHR m_PresentMode{};
 
 		core::u32 m_CurrentImageIndex = 0;
-		vk::raii::Semaphore m_ImageAvailableSemaphore{nullptr};
 	};
 } // namespace aw::render

@@ -16,11 +16,6 @@ namespace aw::render
 		m_Queue.waitIdle();
 	}
 
-	void VulkanDeviceQueue::set_signal_fence_on_submit(IDeviceFence* fence)
-	{
-		m_SignalFence = fence;
-	}
-
 	void VulkanDeviceQueue::present_swap_chain(ISwapChain* swap_chain)
 	{
 		const VulkanSwapChain* vulkan_swap_chain = static_cast<VulkanSwapChain*>(swap_chain);
@@ -40,7 +35,7 @@ namespace aw::render
 		m_PresentWaitSemaphores.clear();
 	}
 
-	void VulkanDeviceQueue::submit(IDeviceCommandList* command_list)
+	void VulkanDeviceQueue::submit(IDeviceCommandList* command_list, IDeviceFence* fence_to_signal)
 	{
 		// TODO: Figure out where to get wait and signal semaphores
 	}

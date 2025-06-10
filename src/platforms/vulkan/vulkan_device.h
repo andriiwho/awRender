@@ -16,6 +16,7 @@ namespace aw::render
 
 		IDeviceQueue* create_device_queue(DeviceQueueType queue_type) override;
 		IDeviceFence* create_fence() override;
+		IDeviceCommandList* create_command_list() override;
 
 		const vk::raii::Device& get_device() const { return m_Device; }
 		const vk::raii::Instance& get_instance() const { return m_Instance; }

@@ -28,6 +28,7 @@ i32 main()
 
 	const RefPtr fence = device->create_fence();
 	const RefPtr swap_chain = device->create_swap_chain(*window);
+	const RefPtr cmd = device->create_command_list();
 
 	while (true)
 	{
@@ -36,8 +37,6 @@ i32 main()
 		{
 			break;
 		}
-
-		queue->set_signal_fence_on_submit(fence);
 	}
 
 	return 0;
