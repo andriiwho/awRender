@@ -23,8 +23,11 @@ namespace aw::render
 		const vk::raii::PhysicalDevice& get_physical_device() const { return m_PhysicalDevice; }
 
 		ISwapChain* create_swap_chain(const IRenderWindowInterface& window) override;
-
 		core::u32 get_graphics_queue_index() const { return m_GraphicsQueueIndex; }
+
+		IFrameContext* create_frame_context() override;
+
+		void wait_idle() override;
 
 	private:
 		void init_vulkan_instance();

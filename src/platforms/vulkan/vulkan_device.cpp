@@ -2,6 +2,7 @@
 
 #include "vulkan_command_list.h"
 #include "vulkan_fence.h"
+#include "vulkan_frame.h"
 #include "vulkan_queue.h"
 #include "vulkan_swap_chain.h"
 #include "vulkan_window.h"
@@ -53,6 +54,7 @@ namespace aw::render
 		static vk::Bool32 vulkan_validation_callback(const vk::DebugUtilsMessageSeverityFlagBitsEXT message_severity, const vk::DebugUtilsMessageTypeFlagsEXT message_type, const vk::DebugUtilsMessengerCallbackDataEXT* callback_data, void* user_data)
 		{
 			fmt::println("(awRender) Vulkan validation layer ({}) ({}): {}", vk::to_string(message_severity), vk::to_string(message_type), callback_data->pMessage);
+			fflush(stdout);
 			return vk::False;
 		}
 	} // namespace debug
@@ -81,7 +83,7 @@ namespace aw::render
 		fmt::println("(awRender) vulkan device destroyed.");
 	}
 
-	IDeviceQueue* VulkanDevice::create_device_queue(DeviceQueueType queue_type)
+	IDeviceQueue* VulkanDevice::create_device_queue(const DeviceQueueType queue_type)
 	{
 		core::u32 queue_index = 0;
 		switch (queue_type)
@@ -125,6 +127,16 @@ namespace aw::render
 			fmt::println("(awRender) Failed to create swap chain: {}", e.what());
 			return nullptr;
 		}
+	}
+
+	IFrameContext* VulkanDevice::create_frame_context()
+	{
+		return aw_new VulkanFrame;
+	}
+
+	void VulkanDevice::wait_idle()
+	{
+		m_Device.waitIdle();
 	}
 
 	void VulkanDevice::init_vulkan_instance()

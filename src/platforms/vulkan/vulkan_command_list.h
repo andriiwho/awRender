@@ -15,6 +15,8 @@ namespace aw::render
 		void open() override;
 		void close() override;
 
+		vk::CommandBuffer get_command_buffer() const { return m_CommandBuffer.at(0);}
+
 	private:
 		vk::raii::CommandBuffer& current() { return m_CommandBuffer.at(0); }
 

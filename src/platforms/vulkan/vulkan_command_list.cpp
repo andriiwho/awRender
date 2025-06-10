@@ -13,6 +13,7 @@ namespace aw::render
 		m_CommandPool = g_vulkan_device->get_device().createCommandPool(pool_info);
 		m_CommandBuffer = g_vulkan_device->get_device().allocateCommandBuffers(
 			vk::CommandBufferAllocateInfo()
+				.setCommandPool(m_CommandPool)
 				.setCommandBufferCount(1)
 				.setLevel(vk::CommandBufferLevel::ePrimary));
 	}

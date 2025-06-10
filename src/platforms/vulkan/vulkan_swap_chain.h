@@ -22,6 +22,8 @@ namespace aw::render
 		vk::SwapchainKHR get_swap_chain() const { return m_SwapChain; }
 		core::u32 get_current_image_index() const { return m_CurrentImageIndex; }
 
+		core::u32 acquire_next_image(IFrameContext* frame_context) override;
+
 	private:
 		void clear_swap_chain();
 		void create_swap_chain();

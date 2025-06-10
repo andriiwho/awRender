@@ -12,6 +12,7 @@ namespace aw::render
 		explicit VulkanFence(const vk::raii::Device& device);
 
 		void wait() override;
+		vk::Fence get_fence() const { return m_Fence; }
 
 	private:
 		vk::raii::Fence m_Fence{nullptr};

@@ -16,5 +16,7 @@ namespace aw::render
 		{
 			throw std::runtime_error("Failed to wait for fence");
 		}
+
+		g_vulkan_device->get_device().resetFences(*m_Fence);
 	}
 } // namespace aw::render

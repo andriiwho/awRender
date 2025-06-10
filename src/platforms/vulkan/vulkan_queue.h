@@ -13,9 +13,9 @@ namespace aw::render
 		VulkanDeviceQueue(vk::Queue queue, core::u32 queue_family_index, DeviceQueueType queue_type);
 		~VulkanDeviceQueue() override;
 
-		void present_swap_chain(ISwapChain* swap_chain) override;
+		void present_swap_chain(IFrameContext* ctx, ISwapChain* swap_chain) override;
 
-		void submit(IDeviceCommandList* command_list, IDeviceFence* fence_to_signal) override;
+		void submit(IFrameContext* ctx) override;
 
 	private:
 		vk::Queue m_Queue;
@@ -23,6 +23,5 @@ namespace aw::render
 		DeviceQueueType m_QueueType;
 
 		core::RefPtr<IDeviceFence> m_SignalFence = nullptr;
-		core::Vector<vk::Semaphore> m_PresentWaitSemaphores{};
 	};
 }

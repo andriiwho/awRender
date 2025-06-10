@@ -10,3 +10,5 @@
 #include "aw/render/api/device_fence.h"
 #include "aw/render/api/render_state.h"
 #include "aw/render/api/swap_chain.h"
+#include "aw/render/api/frame_context.h"
+#include "aw/render/api/command_list.h"

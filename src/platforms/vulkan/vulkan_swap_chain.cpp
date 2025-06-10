@@ -1,7 +1,9 @@
 #include "vulkan_swap_chain.h"
 
 #include "vulkan_device.h"
+#include "vulkan_frame.h"
 #include "vulkan_window.h"
+#include "fmt/ostream.h"
 
 namespace aw::render
 {
@@ -17,6 +19,25 @@ namespace aw::render
 
 	VulkanSwapChain::~VulkanSwapChain()
 	{
+	}
+
+	core::u32 VulkanSwapChain::acquire_next_image(IFrameContext* frame_context)
+	{
+		if (!frame_context)
+		{
+			throw std::runtime_error("Frame context is null.");
+		}
+
+		const VulkanFrame* vk_frame = static_cast<VulkanFrame*>(frame_context);
+		auto [result, id] = m_SwapChain.acquireNextImage(UINT64_MAX, vk_frame->get_image_ready_semaphore(), nullptr);
+
+		if (result != vk::Result::eSuccess)
+		{
+			throw std::runtime_error("Failed to acquire next image.");
+		}
+
+		m_CurrentImageIndex = id;
+		return m_CurrentImageIndex;
 	}
 
 	void VulkanSwapChain::clear_swap_chain()
@@ -83,6 +104,7 @@ namespace aw::render
 		m_SurfaceFormat = detail::choose_surface_format(m_AssociatedWindow.get_surface());
 		m_SwapChainExtent = detail::choose_swap_chain_extent(surface_capabilities);
 		m_PresentMode = detail::choose_swap_chain_present_mode(m_AssociatedWindow.get_surface());
+		fmt::println("Selected present mode: {}", vk::to_string(m_PresentMode));
 
 		const auto create_info = vk::SwapchainCreateInfoKHR()
 									 .setSurface(m_AssociatedWindow.get_surface())

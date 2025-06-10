@@ -1,6 +1,7 @@
 #pragma once
 
 #include <aw/core/all.h>
+#include <array>
 
 namespace aw::render
 {
@@ -9,6 +10,7 @@ namespace aw::render
 	class IDeviceQueue;
 	class ISwapChain;
 	class IRenderWindowInterface;
+	class IFrameContext;
 
 	enum class DeviceQueueType : core::u8
 	{
@@ -22,5 +24,19 @@ namespace aw::render
 		virtual IDeviceFence* create_fence() = 0;
 		virtual ISwapChain* create_swap_chain(const IRenderWindowInterface& window) = 0;
 		virtual IDeviceCommandList* create_command_list() = 0;
+
+		virtual IFrameContext* create_frame_context() = 0;
+		virtual void wait_idle() = 0;
+
+		template<core::usize N>
+		std::array<IFrameContext*, N> create_frame_contexts()
+		{
+			std::array<IFrameContext*, N> contexts{};
+			for (core::usize i = 0; i < N; ++i)
+			{
+				contexts[i] = create_frame_context();
+			}
+			return contexts;
+		}
 	};
-}
+} // namespace aw::render
