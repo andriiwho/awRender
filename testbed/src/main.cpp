@@ -55,14 +55,21 @@ i32 main()
 		{ { 0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
 	};
 
+	DeviceBufferCreateInfo staging_buffer_info{
+		.debug_name = "test_staging",
+		.size_in_bytes = sizeof(vertices),
+		.usage = DeviceBufferUsage::copy_src | DeviceBufferUsage::sequential_write
+	};
+	const RefPtr staging_buffer = device->create_buffer(std::move(staging_buffer_info));
+
 	DeviceBufferCreateInfo vertex_buffer_info{
 		.debug_name = "test_vb",
 		.size_in_bytes = sizeof(vertices),
-		.usage = DeviceBufferUsage::vertex | DeviceBufferUsage::sequential_write,
+		.usage = DeviceBufferUsage::vertex | DeviceBufferUsage::copy_dst,
 	};
 	const RefPtr vertex_buffer = device->create_buffer(std::move(vertex_buffer_info));
 
-	if (void* mapped_vb = vertex_buffer->map())
+	if (void* mapped_vb = staging_buffer->map())
 	{
 		memcpy(mapped_vb, vertices, sizeof(vertices));
 	}
@@ -100,6 +107,11 @@ i32 main()
 		swap_chain->acquire_next_image(context);
 		DeviceCommandList* cmd_list = context->cmd();
 		cmd_list->open();
+
+		static int do_once = [&] {
+			cmd_list->copy_buffer(staging_buffer, vertex_buffer, sizeof(vertices));
+			return 0;
+		}();
 
 		// Draw commands here...
 

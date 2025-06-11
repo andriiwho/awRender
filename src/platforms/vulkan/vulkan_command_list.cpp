@@ -1,5 +1,6 @@
 #include "vulkan_command_list.h"
 
+#include "vulkan_buffer.h"
 #include "vulkan_device.h"
 #include "vulkan_swap_chain.h"
 
@@ -14,7 +15,7 @@ namespace aw::render
 		m_CommandBuffer = g_vulkan_device->get_device().allocateCommandBuffers(
 			vk::CommandBufferAllocateInfo()
 				.setCommandPool(m_CommandPool)
-				.setCommandBufferCount(1)
+				.setCommandBufferCount(2)
 				.setLevel(vk::CommandBufferLevel::ePrimary));
 	}
 
@@ -26,17 +27,45 @@ namespace aw::render
 	{
 		DeviceCommandList::open();
 
+		m_TransferOpen = false;
+		m_HasAnyTransferCommands = false;
+
 		// Reset command buffer
-		current().reset();
+		cmd().reset();
 
 		constexpr auto begin_info = vk::CommandBufferBeginInfo();
-		current().begin(begin_info);
+		cmd().begin(begin_info);
 	}
 
 	void VulkanCommandList::close()
 	{
-		current().end();
+		cmd().end();
+
+		if (has_any_transfer_commands())
+		{
+			transfer().end();
+		}
 
 		DeviceCommandList::close();
+	}
+
+	void VulkanCommandList::copy_buffer(DeviceBuffer* from, DeviceBuffer* to, core::u64 size)
+	{
+		if (!m_TransferOpen)
+		{
+			open_transfer();
+		}
+
+		m_HasAnyTransferCommands = true;
+		const vk::BufferCopy region{0, 0, size};
+		transfer().copyBuffer(static_cast<VulkanBuffer*>(from)->get_handle(), static_cast<VulkanBuffer*>(to)->get_handle(), region);
+	}
+
+	void VulkanCommandList::open_transfer()
+	{
+		transfer().reset();
+		transfer().begin({});
+
+		m_TransferOpen = true;
 	}
 } // namespace aw::render

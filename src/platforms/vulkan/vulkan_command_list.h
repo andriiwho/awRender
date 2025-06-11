@@ -16,13 +16,22 @@ namespace aw::render
 		void close() override;
 
 		vk::CommandBuffer get_command_buffer() const { return m_CommandBuffer.at(0);}
+		vk::CommandBuffer get_transfer_command_buffer() const { return m_CommandBuffer.at(1); }
 
-		void copy_buffer_to_buffer(const BufferToBufferCopy& copy) override;
+		bool has_any_transfer_commands() const { return m_HasAnyTransferCommands && m_TransferOpen; }
+
+		void copy_buffer(DeviceBuffer* from, DeviceBuffer* to, core::u64 size) override;
 
 	private:
-		vk::raii::CommandBuffer& current() { return m_CommandBuffer.at(0); }
+		vk::raii::CommandBuffer& cmd() { return m_CommandBuffer.at(0); }
+		vk::raii::CommandBuffer& transfer() { return m_CommandBuffer.at(1); }
+
+		void open_transfer();
 
 		vk::raii::CommandPool m_CommandPool{nullptr};
 		std::vector<vk::raii::CommandBuffer> m_CommandBuffer{};
+
+		bool m_TransferOpen:1 = false;
+		bool m_HasAnyTransferCommands:1 = false;
 	};
 }

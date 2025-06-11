@@ -11,5 +11,7 @@ namespace aw::render
 	public:
 		virtual void open();
 		virtual void close();
+
+		virtual void copy_buffer(DeviceBuffer* from, DeviceBuffer* to, core::u64 size) = 0;
 	};
 }

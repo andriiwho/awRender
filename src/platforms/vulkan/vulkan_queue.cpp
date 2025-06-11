@@ -41,15 +41,32 @@ namespace aw::render
 	{
 		const auto frame = static_cast<VulkanFrame*>(ctx);
 		const auto cmd = frame->vk_cmd()->get_command_buffer();
-		const auto image_ready_semaphore = frame->get_image_ready_semaphore();
 		const auto render_finished_semaphore = frame->get_render_finished_semaphore();
-		constexpr vk::PipelineStageFlags wait_mask = vk::PipelineStageFlagBits::eColorAttachmentOutput;
+
+		core::u32 num_wait_semaphores = 1;
+		constexpr std::array<vk::PipelineStageFlags, 2> wait_stages{ vk::PipelineStageFlagBits::eColorAttachmentOutput, vk::PipelineStageFlagBits::eTransfer };
+		const std::array wait_semaphores{ frame->get_image_ready_semaphore(), frame->get_frame_transfer_semaphore() };
+
+		// Submit transfers
+		if (frame->vk_cmd()->has_any_transfer_commands())
+		{
+			const auto vk_cmd = frame->vk_cmd();
+			auto transfer_cmd = vk_cmd->get_transfer_command_buffer();
+
+			const auto submit_info = vk::SubmitInfo()
+										 .setCommandBuffers(transfer_cmd)
+										 .setSignalSemaphores(wait_semaphores[1]);
+			m_Queue.submit(submit_info);
+
+			num_wait_semaphores = 2;
+		}
 
 		const auto submit_info = vk::SubmitInfo()
-			.setCommandBuffers(cmd)
-			.setWaitSemaphores(image_ready_semaphore)
-			.setWaitDstStageMask(wait_mask)
-			.setSignalSemaphores(render_finished_semaphore);
+									 .setCommandBuffers(cmd)
+									 .setWaitSemaphoreCount(num_wait_semaphores)
+									 .setPWaitSemaphores(wait_semaphores.data())
+									 .setPWaitDstStageMask(wait_stages.data())
+									 .setSignalSemaphores(render_finished_semaphore);
 		m_Queue.submit(submit_info, frame->get_fence()->get_fence());
 	}
 } // namespace aw::render

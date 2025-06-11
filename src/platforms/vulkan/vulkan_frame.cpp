@@ -10,6 +10,7 @@ namespace aw::render
 		m_Fence = static_cast<VulkanFence*>(g_vulkan_device->create_fence());
 		m_ImageReadySemaphore = g_vulkan_device->get_device().createSemaphore({});
 		m_RenderFinishedSemaphore = g_vulkan_device->get_device().createSemaphore({});
+		m_FrameTransferSemaphore = g_vulkan_device->get_device().createSemaphore({});
 		m_CommandList = static_cast<VulkanCommandList*>(g_vulkan_device->create_command_list());
 	}
 
