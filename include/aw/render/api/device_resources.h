@@ -12,6 +12,23 @@ namespace aw::render
 		image,
 	};
 
+	enum class DeviceResourceState
+	{
+		undefined,
+		color_attachment,
+		depth_attachment,
+		depth_read_only,
+		stencil_attachment,
+		stencil_read_only,
+		depth_stencil_attachment,
+		depth_stencil_read_only,
+		depth_read_only_stencil,
+		shader_resource,
+		copy_src,
+		copy_dst,
+		present,
+	};
+
 	class DeviceResource : public core::IntrusiveRefCounted
 	{
 	public:
@@ -19,8 +36,21 @@ namespace aw::render
 
 		DeviceResourceType get_type() const { return m_Type; }
 
+		/**
+		 * Get the resource state of this resource.
+		 * Note: this should not be used in the middle of command buffer recording.
+		 * Command buffers update states after they are closed.
+		 */
+		DeviceResourceState get_state() const { return m_State; }
+
+
 	private:
+		friend class RenderState;
+
+		void update_state(const DeviceResourceState state) { m_State = state; }
+
 		DeviceResourceType m_Type;
+		DeviceResourceState m_State = DeviceResourceState::undefined;
 	};
 
 	class ViewableDeviceResource : public DeviceResource

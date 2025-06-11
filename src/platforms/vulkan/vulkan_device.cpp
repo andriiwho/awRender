@@ -6,6 +6,7 @@
 #include "vulkan_fence.h"
 #include "vulkan_frame.h"
 #include "vulkan_image.h"
+#include "vulkan_image_view.h"
 #include "vulkan_queue.h"
 #include "vulkan_swap_chain.h"
 #include "vulkan_window.h"
@@ -120,7 +121,7 @@ namespace aw::render
 		return aw_new VulkanFence(m_Device);
 	}
 
-	IDeviceCommandList* VulkanDevice::create_command_list()
+	DeviceCommandList* VulkanDevice::create_command_list()
 	{
 		return aw_new VulkanCommandList;
 	}
@@ -133,6 +134,11 @@ namespace aw::render
 	DeviceImage* VulkanDevice::create_image(DeviceImageCreateInfo&& create_info)
 	{
 		return aw_new VulkanImage(std::move(create_info));
+	}
+
+	DeviceImageView* VulkanDevice::create_image_view(DeviceImage* image, DeviceImageViewCreateInfo&& create_info)
+	{
+		return aw_new VulkanImageView(image, std::move(create_info));
 	}
 
 	ISwapChain* VulkanDevice::create_swap_chain(const IRenderWindowInterface& window)

@@ -6,7 +6,7 @@
 
 namespace aw::render
 {
-	class VulkanCommandList final : public IDeviceCommandList
+	class VulkanCommandList final : public DeviceCommandList
 	{
 	public:
 		VulkanCommandList();
@@ -16,6 +16,8 @@ namespace aw::render
 		void close() override;
 
 		vk::CommandBuffer get_command_buffer() const { return m_CommandBuffer.at(0);}
+
+		void copy_buffer_to_buffer(const BufferToBufferCopy& copy) override;
 
 	private:
 		vk::raii::CommandBuffer& current() { return m_CommandBuffer.at(0); }

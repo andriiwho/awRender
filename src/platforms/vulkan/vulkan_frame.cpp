@@ -18,7 +18,7 @@ namespace aw::render
 		m_Fence->wait();
 	}
 
-	IDeviceCommandList* VulkanFrame::cmd() const
+	DeviceCommandList* VulkanFrame::cmd() const
 	{
 		return m_CommandList.get();
 	}

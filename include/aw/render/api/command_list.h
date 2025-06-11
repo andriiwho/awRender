@@ -6,10 +6,10 @@ namespace aw::render
 {
 	class ISwapChain;
 
-	class IDeviceCommandList : public RenderState
+	class DeviceCommandList : public RenderState
 	{
 	public:
-		virtual void open() = 0;
-		virtual void close() = 0;
+		virtual void open();
+		virtual void close();
 	};
 }

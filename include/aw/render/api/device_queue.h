@@ -4,7 +4,7 @@
 
 namespace aw::render
 {
-	class IDeviceCommandList;
+	class DeviceCommandList;
 	class IDeviceFence;
 	class ISwapChain;
 	class IFrameContext;

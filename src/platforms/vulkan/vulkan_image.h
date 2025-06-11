@@ -17,6 +17,8 @@ namespace aw::render
 
 		bool owns_image() const { return std::holds_alternative<vk::raii::Image>(m_ImageHandle); }
 
+		vk::Image get_image() const { return owns_image() ? *get_owned_handle() : get_unowned_handle(); }
+
 		vk::Image get_unowned_handle() const { return std::get<vk::Image>(m_ImageHandle); }
 		vk::raii::Image& get_owned_handle() { return std::get<vk::raii::Image>(m_ImageHandle); }
 		const vk::raii::Image& get_owned_handle() const { return std::get<vk::raii::Image>(m_ImageHandle); }

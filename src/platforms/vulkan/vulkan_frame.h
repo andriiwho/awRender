@@ -18,7 +18,7 @@ namespace aw::render
 		VulkanFence* get_fence() const { return m_Fence.get(); }
 		vk::Semaphore get_image_ready_semaphore() const { return m_ImageReadySemaphore; }
 		vk::Semaphore get_render_finished_semaphore() const { return m_RenderFinishedSemaphore; }
-		IDeviceCommandList* cmd() const override;
+		DeviceCommandList* cmd() const override;
 
 		VulkanCommandList* vk_cmd() const { return m_CommandList.get(); }
 

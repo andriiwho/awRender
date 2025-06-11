@@ -24,6 +24,8 @@ namespace aw::render
 
 	void VulkanCommandList::open()
 	{
+		DeviceCommandList::open();
+
 		// Reset command buffer
 		current().reset();
 
@@ -34,5 +36,7 @@ namespace aw::render
 	void VulkanCommandList::close()
 	{
 		current().end();
+
+		DeviceCommandList::close();
 	}
 } // namespace aw::render
