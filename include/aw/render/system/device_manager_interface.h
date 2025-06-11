@@ -8,6 +8,7 @@
 
 namespace aw::render
 {
+	class IShaderCompiler;
 	/** set to true before creating the first device to enable GPU validation */
 	extern bool g_enable_gpu_validation;
 	extern bool g_enable_verbose_render_api_logging;
@@ -37,6 +38,8 @@ namespace aw::render
 		 * @return
 		 */
 		[[nodiscard]] virtual IRenderWindowInterface* create_device_and_window(const RenderWindowCreateInfo& create_info, IRenderDeviceInterface** out_device_opt) = 0;
+
+		[[nodiscard]] virtual IShaderCompiler* create_shader_compiler() = 0;
 
 		[[nodiscard]] virtual IRenderDeviceInterface* get_device() const = 0;
 

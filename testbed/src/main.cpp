@@ -92,6 +92,8 @@ i32 main()
 	};
 	const RefPtr view = device->create_image_view(image, std::move(view_info));
 
+	const RefPtr shader_compiler = device_manager->create_shader_compiler();
+
 	u32 current_frame = 0;
 	while (true)
 	{
