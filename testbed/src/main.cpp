@@ -48,6 +48,7 @@ i32 main()
 		}
 	};
 
+	// Create triangle vertex buffer
 	constexpr Vertex vertices[] = {
 		{ { 0.0f, 0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
 		{ { -0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
@@ -65,6 +66,20 @@ i32 main()
 	{
 		memcpy(mapped_vb, vertices, sizeof(vertices));
 	}
+
+	// Create test image
+	DeviceImageCreateInfo image_info{
+		.debug_name = "test_image",
+		.type = DeviceImageType::image_2d,
+		.mip_levels = 1,
+		.array_layers = 1,
+		.width = 1280,
+		.height = 1280,
+		.depth = 1,
+		.format = PixelFormat::r8g8b8a8_unorm,
+		.usage = DeviceImageUsage::color_attachment
+	};
+	const RefPtr image = device->create_image(std::move(image_info));
 
 	u32 current_frame = 0;
 	while (true)

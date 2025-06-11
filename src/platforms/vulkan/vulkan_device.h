@@ -20,6 +20,7 @@ namespace aw::render
 		IDeviceFence* create_fence() override;
 		IDeviceCommandList* create_command_list() override;
 		DeviceBuffer* create_buffer(DeviceBufferCreateInfo&& create_info) override;
+		DeviceImage* create_image(DeviceImageCreateInfo&& create_info) override;
 
 		const vk::raii::Device& get_device() const { return m_Device; }
 		const vk::raii::Instance& get_instance() const { return m_Instance; }

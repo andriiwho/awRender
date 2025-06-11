@@ -7,8 +7,19 @@ namespace aw::render
 	{
 	}
 
+	ViewableDeviceResource::ViewableDeviceResource(const DeviceResourceType type)
+		: DeviceResource(type)
+	{
+	}
+
 	DeviceBuffer::DeviceBuffer(DeviceBufferCreateInfo&& info)
 		: DeviceResource(DeviceResourceType::buffer)
+		, m_CreateInfo(std::move(info))
+	{
+	}
+
+	DeviceImage::DeviceImage(DeviceImageCreateInfo&& info)
+		: ViewableDeviceResource(DeviceResourceType::image)
 		, m_CreateInfo(std::move(info))
 	{
 	}

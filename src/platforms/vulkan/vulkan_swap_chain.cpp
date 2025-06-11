@@ -3,6 +3,8 @@
 #include "vulkan_device.h"
 #include "vulkan_frame.h"
 #include "vulkan_window.h"
+#include "vulkan_image.h"
+#include "vulkan_pixel_format.h"
 #include "fmt/ostream.h"
 
 namespace aw::render
@@ -14,6 +16,7 @@ namespace aw::render
 		: m_AssociatedWindow(associated_window)
 	{
 		create_swap_chain();
+		query_images();
 	}
 
 	VulkanSwapChain::~VulkanSwapChain()
@@ -41,6 +44,7 @@ namespace aw::render
 
 	void VulkanSwapChain::clear_swap_chain()
 	{
+		m_SwapChainImages.clear();
 	}
 
 	namespace detail
@@ -107,5 +111,27 @@ namespace aw::render
 									 .setClipped(true)
 									 .setOldSwapchain(m_SwapChain);
 		m_SwapChain = g_vulkan_device->get_device().createSwapchainKHR(create_info);
+	}
+
+	void VulkanSwapChain::query_images()
+	{
+		const auto images = m_SwapChain.getImages();
+		m_SwapChainImages.reserve(images.size());
+		for (const vk::Image image : images)
+		{
+			DeviceImageCreateInfo create_info {
+				.debug_name = "SwapChain Image",
+				.type = DeviceImageType::image_2d,
+				.mip_levels = 1,
+				.array_layers = 1,
+				.width = m_SwapChainExtent.width,
+				.height = m_SwapChainExtent.height,
+				.depth = 1,
+				.format = to_pixel_format(m_SurfaceFormat.format),
+				.usage = DeviceImageUsage::color_attachment,
+			};
+			m_SwapChainImages.emplace_back(aw_new VulkanImage(std::move(create_info), image));
+		}
+
 	}
 } // namespace aw::render

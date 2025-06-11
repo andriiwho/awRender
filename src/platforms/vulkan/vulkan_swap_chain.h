@@ -6,6 +6,7 @@
 
 namespace aw::render
 {
+	class VulkanImage;
 	class VulkanDevice;
 	class VulkanWindow;
 
@@ -26,6 +27,7 @@ namespace aw::render
 	private:
 		void clear_swap_chain();
 		void create_swap_chain();
+		void query_images();
 
 		vk::raii::SwapchainKHR m_SwapChain{nullptr};
 
@@ -35,5 +37,6 @@ namespace aw::render
 		vk::PresentModeKHR m_PresentMode{};
 
 		core::u32 m_CurrentImageIndex = 0;
+		core::Vector<core::RefPtr<VulkanImage>> m_SwapChainImages{};
 	};
 } // namespace aw::render
