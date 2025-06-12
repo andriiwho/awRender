@@ -145,7 +145,7 @@ namespace aw::render
 	{
 		try
 		{
-			return aw_new VulkanSwapChain(static_cast<const VulkanWindow&>(window));
+			return aw_new VulkanSwapChain(dynamic_cast<const VulkanWindow&>(window));
 		}
 		catch (const std::exception& e)
 		{
@@ -345,7 +345,7 @@ namespace aw::render
 		const auto extension_properties = m_PhysicalDevice.enumerateDeviceExtensionProperties();
 		if (const auto iter = std::ranges::find_if(extension_properties, [](const vk::ExtensionProperties& properties) {
 				return strcmp(properties.extensionName, "VK_KHR_portability_subset") == 0;
-			}) != extension_properties.end())
+			}); iter != extension_properties.end())
 		{
 			device_extensions.push_back("VK_KHR_portability_subset");
 		}
