@@ -183,6 +183,10 @@ namespace aw::render
 			extensions[i] = glfw_extensions[i];
 		}
 
+#ifdef __APPLE__
+		extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+#endif
+
 		auto create_info = vk::InstanceCreateInfo()
 							   .setPApplicationInfo(&app_info);
 
@@ -221,6 +225,10 @@ namespace aw::render
 
 		// Set extensions here because we need to ensure that the debug extension is added.
 		create_info.setPEnabledExtensionNames(extensions);
+
+#ifdef __APPLE__
+		create_info.setFlags(vk::InstanceCreateFlagBits::eEnumeratePortabilityKHR);
+#endif
 
 		m_Instance = m_Context.createInstance(create_info);
 
@@ -299,8 +307,9 @@ namespace aw::render
 		}
 
 		// Collect queue family indices
+		core::u32 index = 0;
 		for (const auto queue_families = m_PhysicalDevice.getQueueFamilyProperties();
-			const auto& [index, family] : std::ranges::views::enumerate(queue_families))
+			const auto& family : queue_families)
 		{
 			if (family.queueFlags & vk::QueueFlagBits::eGraphics)
 			{
@@ -312,6 +321,8 @@ namespace aw::render
 			{
 				break;
 			}
+
+			++index;
 		}
 	}
 
@@ -329,12 +340,23 @@ namespace aw::render
 			queue_create_infos.push_back(queue_create_info);
 		}
 
+		std::vector<const char*> device_extensions{ s_required_device_extensions.begin(), s_required_device_extensions.end() };
+#ifdef __APPLE__
+		const auto extension_properties = m_PhysicalDevice.enumerateDeviceExtensionProperties();
+		if (const auto iter = std::ranges::find_if(extension_properties, [](const vk::ExtensionProperties& properties) {
+				return strcmp(properties.extensionName, "VK_KHR_portability_subset") == 0;
+			}) != extension_properties.end())
+		{
+			device_extensions.push_back("VK_KHR_portability_subset");
+		}
+#endif
+
 		const auto features = m_PhysicalDevice.getFeatures2<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceDescriptorIndexingFeatures>();
 		const auto create_info = vk::DeviceCreateInfo()
 									 .setPNext(&features)
 									 .setQueueCreateInfoCount(1)
 									 .setQueueCreateInfos(queue_create_infos)
-									 .setPEnabledExtensionNames(s_required_device_extensions);
+									 .setPEnabledExtensionNames(device_extensions);
 		m_Device = m_PhysicalDevice.createDevice(create_info);
 
 		for (const char* extension : s_required_device_extensions)
