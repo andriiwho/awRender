@@ -45,7 +45,7 @@ namespace aw::render
 
 	struct DeviceImageViewCreateInfo
 	{
-		core::String debug_name{};
+		std::string debug_name{};
 		DeviceResourceViewAspect aspect{};
 		DeviceResourceViewDimensions dimensions{};
 		core::u8 mip_levels{1};

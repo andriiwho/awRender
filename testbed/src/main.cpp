@@ -17,6 +17,10 @@ struct Vertex
 i32 main()
 {
 	aw_init_global_thread_pool_scoped();
+
+	auto vfs = aw_new AwpkVFS("bin/testbed.awpk");
+	defer[vfs] { vfs->release(); };
+
 	g_enable_gpu_validation = true;
 	g_enable_verbose_render_api_logging = false;
 	g_swap_chain_vsync_enabled = true;
@@ -91,6 +95,8 @@ i32 main()
 		.dimensions = DeviceResourceViewDimensions::image_2d,
 	};
 	const RefPtr view = device->create_image_view(image, std::move(view_info));
+
+	const RefPtr shader_compiler = device_manager->create_shader_compiler();
 
 	u32 current_frame = 0;
 	while (true)

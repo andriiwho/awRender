@@ -1,6 +1,7 @@
 #include "vulkan_device_manager.h"
 
 #include "vulkan_device.h"
+#include "vulkan_shader_compiler.h"
 #include "vulkan_window.h"
 
 #include <stdexcept>
@@ -56,5 +57,10 @@ namespace aw::render
 	IRenderDeviceInterface* VulkanDeviceManager::get_device() const
 	{
 		return m_Device.get();
+	}
+
+	IShaderCompiler* VulkanDeviceManager::create_shader_compiler()
+	{
+		return aw_new VulkanShaderCompiler;
 	}
 } // namespace aw::render

@@ -77,7 +77,7 @@ namespace aw::render
 
 	struct DeviceBufferCreateInfo
 	{
-		core::String debug_name{};
+		std::string debug_name{};
 		core::u64 size_in_bytes{};
 		core::EnumMask<DeviceBufferUsage> usage{};
 	};
@@ -118,7 +118,7 @@ namespace aw::render
 
 	struct DeviceImageCreateInfo
 	{
-		core::String debug_name{};
+		std::string debug_name{};
 		DeviceImageType type{};
 		core::u32 mip_levels{1};
 		core::u32 array_layers{1};

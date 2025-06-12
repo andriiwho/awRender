@@ -8,7 +8,7 @@ namespace aw::render
 	{
 		core::i32 width{};
 		core::i32 height{};
-		core::StringView title{};
+		std::string_view title{};
 	};
 
 	class IRenderWindowInterface

@@ -17,6 +17,7 @@ namespace aw::render
 		void poll_os_events() const override;
 
 		[[nodiscard]] IRenderDeviceInterface* get_device() const override;
+		[[nodiscard]] IShaderCompiler* create_shader_compiler() override;
 
 	private:
 		core::RefPtr<VulkanDevice> m_Device;
