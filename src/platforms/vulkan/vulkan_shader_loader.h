@@ -4,12 +4,13 @@
 
 namespace aw::render
 {
-	class VulkanShaderCompiler final : public IShaderCompiler
+	class VulkanShaderLoader final : public IShaderLoader
 	{
 	public:
-		VulkanShaderCompiler();
-		~VulkanShaderCompiler() override;
-
 		IDeviceShaderModule* compile_shader(core::IFileReader* file_reader, std::string_view entry_point, ShaderStage stage) override;
+
+	private:
+		std::mutex m_LibraryMutex;
+		static std::unordered_map<std::string, core::RefPtr<IDeviceShaderModule>> m_Shaders;
 	};
 }

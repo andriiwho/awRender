@@ -96,7 +96,7 @@ i32 main()
 	};
 	const RefPtr view = device->create_image_view(image, std::move(view_info));
 
-	const RefPtr shader_compiler = device_manager->create_shader_compiler();
+	const RefPtr shader_compiler = device_manager->create_shader_loader_for_current_thread();
 
 	const RefPtr shader_file = g_vfs->open_file_for_reading("shaders://test.vert.spv");
 	const RefPtr shader_module = shader_compiler->compile_shader(shader_file.get(), "main", ShaderStage::vertex);

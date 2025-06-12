@@ -1,7 +1,7 @@
 #include "vulkan_device_manager.h"
 
 #include "vulkan_device.h"
-#include "vulkan_shader_compiler.h"
+#include "vulkan_shader_loader.h"
 #include "vulkan_window.h"
 
 #include <stdexcept>
@@ -59,8 +59,9 @@ namespace aw::render
 		return m_Device.get();
 	}
 
-	IShaderCompiler* VulkanDeviceManager::create_shader_compiler()
+	IShaderLoader* VulkanDeviceManager::create_shader_loader_for_current_thread()
 	{
-		return aw_new VulkanShaderCompiler;
+		thread_local auto loader = aw_new VulkanShaderLoader();
+		return loader;
 	}
 } // namespace aw::render
