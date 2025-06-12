@@ -13,12 +13,12 @@ namespace aw::render
 	{
 	}
 
-	IDeviceShaderModule* VulkanShaderCompiler::compile_shader(const std::string_view path, const std::string_view entry_point, const ShaderStage stage)
+	IDeviceShaderModule* VulkanShaderCompiler::compile_shader(core::IFileReader* file_reader, const std::string_view entry_point, const ShaderStage stage)
 	{
-		auto shader_binary = core::file::read_file_to_binary(path);
+		auto shader_binary = file_reader->read_binary();
 		if (shader_binary.empty())
 		{
-			throw std::runtime_error(fmt::format("Failed to read shader file: {}", path));
+			throw std::runtime_error(fmt::format("Failed to read shader binary from file: {}", file_reader->get_path()));
 		}
 
 		return aw_new VulkanShaderModule(std::span(

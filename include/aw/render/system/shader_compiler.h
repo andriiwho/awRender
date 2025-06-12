@@ -10,6 +10,6 @@ namespace aw::render
 	class IShaderCompiler : public core::IntrusiveRefCounted
 	{
 	public:
-		virtual IDeviceShaderModule* compile_shader(std::string_view path, std::string_view entry_point, ShaderStage stage) = 0;
+		virtual IDeviceShaderModule* compile_shader(core::IFileReader* shader_file, std::string_view entry_point, ShaderStage stage) = 0;
 	};
 } // namespace aw::render

@@ -1,5 +1,7 @@
 #include "vulkan_swap_chain.h"
+#include "aw/render/api/device_shader_module.h"
 #include "aw/render/api/frame_context.h"
+#include "aw/render/system/shader_compiler.h"
 
 #include <aw/core/all.h>
 #include <aw/render/all.h>
@@ -17,9 +19,7 @@ struct Vertex
 i32 main()
 {
 	aw_init_global_thread_pool_scoped();
-
-	auto vfs = aw_new AwpkVFS("bin/testbed.awpk");
-	defer[vfs] { vfs->release(); };
+	aw_init_global_awpk_vfs("bin/testbed.awpk");
 
 	g_enable_gpu_validation = true;
 	g_enable_verbose_render_api_logging = false;
@@ -97,6 +97,9 @@ i32 main()
 	const RefPtr view = device->create_image_view(image, std::move(view_info));
 
 	const RefPtr shader_compiler = device_manager->create_shader_compiler();
+
+	const RefPtr shader_file = g_vfs->open_file_for_reading("shaders://test.vert.spv");
+	const RefPtr shader_module = shader_compiler->compile_shader(shader_file.get(), "main", ShaderStage::vertex);
 
 	u32 current_frame = 0;
 	while (true)

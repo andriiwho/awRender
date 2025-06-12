@@ -10,6 +10,6 @@ namespace aw::render
 		VulkanShaderCompiler();
 		~VulkanShaderCompiler() override;
 
-		IDeviceShaderModule* compile_shader(std::string_view path, std::string_view entry_point, ShaderStage stage) override;
+		IDeviceShaderModule* compile_shader(core::IFileReader* file_reader, std::string_view entry_point, ShaderStage stage) override;
 	};
 }
