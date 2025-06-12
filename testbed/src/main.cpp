@@ -17,6 +17,10 @@ struct Vertex
 i32 main()
 {
 	aw_init_global_thread_pool_scoped();
+
+	auto vfs = aw_new AwpkVFS("bin/testbed.awpk");
+	defer[vfs] { vfs->release(); };
+
 	g_enable_gpu_validation = true;
 	g_enable_verbose_render_api_logging = false;
 	g_swap_chain_vsync_enabled = true;

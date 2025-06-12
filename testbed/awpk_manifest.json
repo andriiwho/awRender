@@ -1,0 +1,6 @@
+{
+  "awpk_path": "bin/testbed.awpk",
+  "directory_mappings": {
+    "shaders://" : "shaders/bin"
+  }
+}
