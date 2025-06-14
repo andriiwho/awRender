@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.30)
 project(awRender)
 
+include(cmake/aw_render_macros.cmake)
 add_subdirectory(dependencies)
 
 add_library(awRender STATIC)

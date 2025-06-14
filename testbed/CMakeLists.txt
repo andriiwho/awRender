@@ -5,5 +5,5 @@ target_link_libraries(awRenderTestbed PRIVATE aw::Render)
 add_subdirectory(shaders)
 
 run_awpk_for_target(awRenderTestbed)
-add_dependencies(awRenderTestbed testbed_compile_shaders)
-add_dependencies(awRenderTestbed_awpk testbed_compile_shaders)
+add_dependencies(awRenderTestbed awTestbedShaders)
+add_dependencies(awRenderTestbed_awpk awTestbedShaders)
