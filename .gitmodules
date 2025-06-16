@@ -1,0 +1,12 @@
+[submodule "dependencies/awCore"]
+	path = dependencies/awCore
+	url = https://github.com/andriiwho/awCore
+[submodule "dependencies/glfw"]
+	path = dependencies/glfw
+	url = https://github.com/glfw/glfw
+[submodule "dependencies/fmt"]
+	path = dependencies/fmt
+	url = https://github.com/fmtlib/fmt
+[submodule "dependencies/VulkanMemoryAllocator"]
+	path = dependencies/VulkanMemoryAllocator
+	url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator

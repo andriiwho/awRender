@@ -98,8 +98,9 @@ i32 main()
 
 	const RefPtr shader_compiler = device_manager->create_shader_loader_for_current_thread();
 
-	const RefPtr shader_file = g_vfs->open_file_for_reading("shaders://test.vert.spv");
-	const RefPtr shader_module = shader_compiler->compile_shader(shader_file.get(), "main", ShaderStage::vertex);
+	const RefPtr shader_file = g_vfs->open_file_for_reading("shaders://test.hlsl");
+	const RefPtr vs_shader_module = shader_compiler->compile_shader(shader_file.get(), "vs_main", ShaderStage::vertex);
+	const RefPtr fs_shader_module = shader_compiler->compile_shader(shader_file.get(), "fs_main", ShaderStage::fragment);
 
 	u32 current_frame = 0;
 	while (true)

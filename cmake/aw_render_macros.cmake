@@ -23,9 +23,6 @@ macro(aw_compile_shader target_name shader_path)
         list(APPEND slangc_args -entry ${ARG_ENTRY})
     endif()
 
-    message(STATUS ${slangc_args})
-    message(STATUS ${ARGN})
-
     add_custom_command(TARGET ${target_name} POST_BUILD
             COMMAND ${SLANG_EXECUTABLE} ARGS ${shader_path} -o ${ARG_OUTPUT} -target ${ARG_SHADER_TARGET} ${slangc_args}
             WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
