@@ -1,3 +1,4 @@
 #pragma once
 
 #cmakedefine AW_VULKAN_SUPPORTED
+#cmakedefine AWRENDER_USE_AWPK

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.30)
 project(awRender)
 
+option(AWRENDER_USE_AWPK "Whether to use AWPK" OFF)
+
 include(cmake/aw_render_macros.cmake)
 add_subdirectory(dependencies)
 

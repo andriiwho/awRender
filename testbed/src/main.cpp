@@ -20,7 +20,13 @@ struct Vertex
 i32 testbed_main()
 {
 	aw_init_global_thread_pool_scoped();
+
+#ifdef AWRENDER_USE_AWPK
 	aw_init_global_awpk_vfs("bin/testbed.awpk");
+#else
+	aw_init_global_files_vfs();
+	static_cast<FilesVFS*>(g_vfs)->try_init_mappings_from_awpk_manifest();
+#endif
 
 	g_enable_gpu_validation = true;
 	g_enable_verbose_render_api_logging = false;
