@@ -3,6 +3,7 @@
 #include "aw/render/api/frame_context.h"
 #include "aw/render/system/shader_compiler.h"
 
+#include <iostream>
 #include <aw/core/all.h>
 #include <aw/render/all.h>
 
@@ -16,7 +17,7 @@ struct Vertex
 	Vector3 color;
 };
 
-i32 main()
+i32 testbed_main()
 {
 	aw_init_global_thread_pool_scoped();
 	aw_init_global_awpk_vfs("bin/testbed.awpk");
@@ -98,9 +99,11 @@ i32 main()
 
 	const RefPtr shader_compiler = device_manager->create_shader_loader_for_current_thread();
 
-	const RefPtr shader_file = g_vfs->open_file_for_reading("shaders://test.hlsl");
-	const RefPtr vs_shader_module = shader_compiler->compile_shader(shader_file.get(), "vs_main", ShaderStage::vertex);
-	const RefPtr fs_shader_module = shader_compiler->compile_shader(shader_file.get(), "fs_main", ShaderStage::fragment);
+	const RefPtr shader_file = g_vfs->open_file_for_reading("shaders://test.vert");
+	const RefPtr vs_shader_module = shader_compiler->compile_shader(shader_file, "main", ShaderStage::vertex);
+
+	const RefPtr fs_file = g_vfs->open_file_for_reading("shaders://test.frag");
+	const RefPtr fs_shader_module = shader_compiler->compile_shader(fs_file, "main", ShaderStage::fragment);
 
 	u32 current_frame = 0;
 	while (true)
@@ -135,4 +138,17 @@ i32 main()
 	device->wait_idle();
 
 	return 0;
+}
+
+i32 main()
+{
+	try
+	{
+		return testbed_main();
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+		return -1;
+	}
 }
