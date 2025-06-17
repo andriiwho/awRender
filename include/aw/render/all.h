@@ -14,3 +14,4 @@
 #include "aw/render/api/command_list.h"
 #include "aw/render/api/device_resources.h"
 #include "aw/render/api/device_views.h"
+#include "aw/render/api/render_pass.h"

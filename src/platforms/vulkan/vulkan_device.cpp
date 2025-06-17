@@ -8,6 +8,7 @@
 #include "vulkan_image.h"
 #include "vulkan_image_view.h"
 #include "vulkan_queue.h"
+#include "vulkan_render_pass.h"
 #include "vulkan_swap_chain.h"
 #include "vulkan_window.h"
 #include "GLFW/glfw3.h"
@@ -139,6 +140,11 @@ namespace aw::render
 	DeviceImageView* VulkanDevice::create_image_view(DeviceImage* image, DeviceImageViewCreateInfo&& create_info)
 	{
 		return aw_new VulkanImageView(image, std::move(create_info));
+	}
+
+	IRenderPass* VulkanDevice::create_render_pass(const std::string& debug_name)
+	{
+		return aw_new VulkanRenderPass(debug_name);
 	}
 
 	ISwapChain* VulkanDevice::create_swap_chain(const IRenderWindowInterface& window)

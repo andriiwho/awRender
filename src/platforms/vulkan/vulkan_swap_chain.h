@@ -23,6 +23,7 @@ namespace aw::render
 		core::u32 get_current_image_index() const { return m_CurrentImageIndex; }
 
 		core::u32 acquire_next_image(IFrameContext* frame_context) override;
+		PixelFormat get_pixel_format() const override;
 
 	private:
 		void clear_swap_chain();

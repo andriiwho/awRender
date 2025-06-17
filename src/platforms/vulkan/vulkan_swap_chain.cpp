@@ -42,6 +42,11 @@ namespace aw::render
 		return m_CurrentImageIndex;
 	}
 
+	PixelFormat VulkanSwapChain::get_pixel_format() const
+	{
+		return to_pixel_format(m_SurfaceFormat.format);
+	}
+
 	void VulkanSwapChain::clear_swap_chain()
 	{
 		m_SwapChainImages.clear();

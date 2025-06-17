@@ -111,6 +111,19 @@ i32 testbed_main()
 
 	const auto vs_shader_module = shader_compiler->compile_shader("shaders://test", "vertex_shader", ShaderStage::vertex);
 
+	// Create a render pass
+	const RefPtr test_pass = device->create_render_pass("test_pass");
+	{
+		PassImageDesc sc_image{
+			.format = swap_chain->get_pixel_format(),
+			.state_before_pass = DeviceResourceState::undefined,
+			.state_in_pass = DeviceResourceState::color_attachment,
+			.state_after_pass = DeviceResourceState::present,
+		};
+		test_pass->add_pass_image(sc_image);
+	}
+	test_pass->build();
+
 	u32 current_frame = 0;
 	while (true)
 	{
