@@ -3,7 +3,6 @@ project(awRender)
 
 option(AWRENDER_USE_AWPK "Whether to use AWPK" OFF)
 
-include(cmake/aw_render_macros.cmake)
 add_subdirectory(dependencies)
 
 add_library(awRender STATIC)

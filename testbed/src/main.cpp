@@ -108,7 +108,7 @@ i32 testbed_main()
 		// This should not be an instance call, rather a global call.
 		shader_compiler->clear_cache();
 	};
-	
+
 	const auto vs_shader_module = shader_compiler->compile_shader("shaders://test", "vertex_shader", ShaderStage::vertex);
 
 	u32 current_frame = 0;
