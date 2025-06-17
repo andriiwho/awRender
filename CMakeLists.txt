@@ -26,6 +26,10 @@ if (AW_VULKAN_SUPPORTED)
     target_link_libraries(awRender PUBLIC awVulkanPlatform)
 endif ()
 
+macro(copy_slang_binary targetName)
+    add_custom_command(TARGET ${targetName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:slang> $<TARGET_FILE_DIR:${targetName}>/)
+endmacro()
+
 option(AWRENDER_INCLUDE_TESTBED "Whether to include the testbed project in the build" ON)
 if (AWRENDER_INCLUDE_TESTBED)
     add_subdirectory(testbed)

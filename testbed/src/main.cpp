@@ -104,12 +104,12 @@ i32 testbed_main()
 	const RefPtr view = device->create_image_view(image, std::move(view_info));
 
 	const RefPtr shader_compiler = device_manager->create_shader_loader_for_current_thread();
-
-	const RefPtr shader_file = g_vfs->open_file_for_reading("shaders://test.vert");
-	const RefPtr vs_shader_module = shader_compiler->compile_shader(shader_file, "main", ShaderStage::vertex);
-
-	const RefPtr fs_file = g_vfs->open_file_for_reading("shaders://test.frag");
-	const RefPtr fs_shader_module = shader_compiler->compile_shader(fs_file, "main", ShaderStage::fragment);
+	defer[shader_compiler] {
+		// This should not be an instance call, rather a global call.
+		shader_compiler->clear_cache();
+	};
+	
+	const auto vs_shader_module = shader_compiler->compile_shader("shaders://test", "vertex_shader", ShaderStage::vertex);
 
 	u32 current_frame = 0;
 	while (true)
