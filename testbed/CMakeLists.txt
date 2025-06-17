@@ -5,3 +5,5 @@ target_link_libraries(awRenderTestbed PRIVATE aw::Render)
 if(AWRENDER_USE_AWPK)
     run_awpk_for_target(awRenderTestbed)
 endif()
+
+copy_slang_binary(awRenderTestbed)

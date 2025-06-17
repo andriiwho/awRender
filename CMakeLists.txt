@@ -3,7 +3,6 @@ project(awRender)
 
 option(AWRENDER_USE_AWPK "Whether to use AWPK" OFF)
 
-include(cmake/aw_render_macros.cmake)
 add_subdirectory(dependencies)
 
 add_library(awRender STATIC)
@@ -25,6 +24,10 @@ target_include_directories(awRender PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/generated
 if (AW_VULKAN_SUPPORTED)
     target_link_libraries(awRender PUBLIC awVulkanPlatform)
 endif ()
+
+macro(copy_slang_binary targetName)
+    add_custom_command(TARGET ${targetName} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:slang> $<TARGET_FILE_DIR:${targetName}>/)
+endmacro()
 
 option(AWRENDER_INCLUDE_TESTBED "Whether to include the testbed project in the build" ON)
 if (AWRENDER_INCLUDE_TESTBED)
