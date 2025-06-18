@@ -110,11 +110,13 @@ namespace aw::render
 			std::lock_guard lock(m_LibraryMutex);
 			if (const auto iter = m_Shaders.find(std::string(shader_file_path)); iter != m_Shaders.end())
 			{
+				fmt::println("Found shader '{}' with entry point '{}' in cache. Loading...", shader_file_path, entry_point);
 				return iter->second.get();
 			}
 		}
 
 		{
+			fmt::println("Compiling shader '{}' with entry point '{}' ...", shader_file_path, entry_point);
 			Slang::ComPtr<slang::IModule> module;
 			if (const auto iter = m_LoadedModules.find(std::string(shader_file_path)); iter != m_LoadedModules.end())
 			{
