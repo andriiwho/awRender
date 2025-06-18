@@ -8,6 +8,65 @@
 
 namespace aw::render
 {
+	static vk::ClearValue make_clear_value(PassClearValue clear_value)
+	{
+		if (std::holds_alternative<ClearValue_Color<float>>(clear_value))
+		{
+			vk::ClearColorValue out_color_value = {};
+			const auto& color_value = std::get<ClearValue_Color<float>>(clear_value);
+
+			out_color_value.float32[0] = color_value.r;
+			out_color_value.float32[1] = color_value.g;
+			out_color_value.float32[2] = color_value.b;
+			out_color_value.float32[3] = color_value.a;
+
+			vk::ClearValue out_value = {};
+			out_value.setColor(out_color_value);
+			return out_value;
+		}
+		if (std::holds_alternative<ClearValue_Color<core::i32>>(clear_value))
+		{
+			vk::ClearColorValue out_color_value = {};
+			const auto& color_value = std::get<ClearValue_Color<core::i32>>(clear_value);
+
+			out_color_value.int32[0] = color_value.r;
+			out_color_value.int32[1] = color_value.g;
+			out_color_value.int32[2] = color_value.b;
+			out_color_value.int32[3] = color_value.a;
+
+			vk::ClearValue out_value = {};
+			out_value.setColor(out_color_value);
+			return out_value;
+		}
+		if (std::holds_alternative<ClearValue_Color<core::u32>>(clear_value))
+		{
+			vk::ClearColorValue out_color_value = {};
+			const auto& color_value = std::get<ClearValue_Color<core::i32>>(clear_value);
+
+			out_color_value.uint32[0] = color_value.r;
+			out_color_value.uint32[1] = color_value.g;
+			out_color_value.uint32[2] = color_value.b;
+			out_color_value.uint32[3] = color_value.a;
+
+			vk::ClearValue out_value = {};
+			out_value.setColor(out_color_value);
+			return out_value;
+		}
+		if (std::holds_alternative<ClearValue_DepthStencil>(clear_value))
+		{
+			vk::ClearDepthStencilValue out_ds_value = {};
+			const auto& color_value = std::get<ClearValue_DepthStencil>(clear_value);
+			out_ds_value.depth = color_value.depth;
+			out_ds_value.stencil = color_value.stencil;
+
+			vk::ClearValue out_value = {};
+			out_value.setDepthStencil(out_ds_value);
+			return out_value;
+		}
+
+		throw std::runtime_error("Invalid clear value");
+	}
+
 	static constexpr vk::ImageLayout to_vulkan_image_layout(const DeviceResourceState state)
 	{
 		switch (state)
@@ -164,6 +223,16 @@ namespace aw::render
 									 .setSubpasses(subpass)
 									 .setDependencies(dependencies);
 		m_RenderPass = g_vulkan_device->get_device().createRenderPass(create_info);
+
+		// Compile clear values
+		m_ClearValues.reserve(attachments.size());
+		for (const auto& image : m_Images)
+		{
+			if (image.clear_value)
+			{
+				m_ClearValues.push_back(make_clear_value(*image.clear_value));
+			}
+		}
 	}
 
 	void VulkanRenderPass::add_pass_image(const PassImageDesc& image_desc)

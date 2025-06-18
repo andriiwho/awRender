@@ -17,6 +17,12 @@ namespace aw::render
 		void flush_resource_states() const;
 		void start_resource_tracking(DeviceResource* resource) const;
 
+		struct
+		{
+			class IRenderPass* current_render_pass{};
+			class IFrameBuffer* current_frame_buffer{};
+		} m_State = {};
+
 	private:
 		mutable std::unordered_map<DeviceResource*, DeviceResourceState> m_ResourceStates;
 	};

@@ -4,7 +4,9 @@
 #include "vulkan_frame.h"
 #include "vulkan_window.h"
 #include "vulkan_image.h"
+#include "vulkan_image_view.h"
 #include "vulkan_pixel_format.h"
+#include "aw/render/api/device_views.h"
 #include "fmt/ostream.h"
 
 namespace aw::render
@@ -17,6 +19,7 @@ namespace aw::render
 	{
 		create_swap_chain();
 		query_images();
+		init_views();
 	}
 
 	VulkanSwapChain::~VulkanSwapChain()
@@ -49,6 +52,7 @@ namespace aw::render
 
 	void VulkanSwapChain::clear_swap_chain()
 	{
+		m_SwapChainImageViews.clear();
 		m_SwapChainImages.clear();
 	}
 
@@ -124,7 +128,7 @@ namespace aw::render
 		m_SwapChainImages.reserve(images.size());
 		for (const vk::Image image : images)
 		{
-			DeviceImageCreateInfo create_info {
+			DeviceImageCreateInfo create_info{
 				.debug_name = "SwapChain Image",
 				.type = DeviceImageType::image_2d,
 				.mip_levels = 1,
@@ -137,6 +141,22 @@ namespace aw::render
 			};
 			m_SwapChainImages.emplace_back(aw_new VulkanImage(std::move(create_info), image));
 		}
+	}
 
+	void VulkanSwapChain::init_views()
+	{
+		for (const auto& image : m_SwapChainImages)
+		{
+			DeviceImageViewCreateInfo create_info {
+				.debug_name = "SwapChain Image View",
+				.aspect = DeviceResourceViewAspect::color,
+				.dimensions = DeviceResourceViewDimensions::image_2d,
+				.mip_levels = 1,
+				.base_mip_level = 0,
+				.array_layers = 1,
+				.base_array_layer = 0
+			};
+			m_SwapChainImageViews.push_back(aw_new VulkanImageView(image, std::move(create_info)));
+		}
 	}
 } // namespace aw::render

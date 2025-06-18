@@ -119,10 +119,13 @@ i32 testbed_main()
 			.state_before_pass = DeviceResourceState::undefined,
 			.state_in_pass = DeviceResourceState::color_attachment,
 			.state_after_pass = DeviceResourceState::present,
+			.clear_value = clear_color(),
 		};
 		test_pass->add_pass_image(sc_image);
 	}
 	test_pass->build();
+
+	const RefPtr swap_chain_frame_buffer = device->create_swap_chain_frame_buffer(swap_chain, test_pass);
 
 	u32 current_frame = 0;
 	while (true)
@@ -146,6 +149,11 @@ i32 testbed_main()
 		}();
 
 		// Draw commands here...
+		cmd_list->begin_render_pass(test_pass, swap_chain_frame_buffer);
+		{
+
+		}
+		cmd_list->end_render_pass();
 
 		cmd_list->close();
 		queue->submit(context);

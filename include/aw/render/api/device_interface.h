@@ -5,6 +5,7 @@
 
 namespace aw::render
 {
+	class ISwapChainFrameBuffer;
 	struct DeviceImageCreateInfo;
 	class DeviceImage;
 	class DeviceImageView;
@@ -16,9 +17,12 @@ namespace aw::render
 	class IRenderPass;
 	class IRenderWindowInterface;
 	class IFrameContext;
+	class IFrameBuffer;
 	struct DeviceBufferCreateInfo;
 	struct DeviceImageViewCreateInfo;
 	struct RenderPassCreateInfo;
+	struct FrameBufferCreateInfo;
+
 
 	enum class DeviceQueueType : core::u8
 	{
@@ -36,6 +40,8 @@ namespace aw::render
 		virtual DeviceImage* create_image(DeviceImageCreateInfo&& create_info) = 0;
 		virtual DeviceImageView* create_image_view(DeviceImage* image, DeviceImageViewCreateInfo&& create_info) = 0;
 		virtual IRenderPass* create_render_pass(const std::string& debug_name) = 0;
+		virtual IFrameBuffer* create_frame_buffer(const FrameBufferCreateInfo& create_info) = 0;
+		virtual ISwapChainFrameBuffer* create_swap_chain_frame_buffer(ISwapChain* swap_chain, IRenderPass* render_pass) = 0;
 
 		virtual IFrameContext* create_frame_context() = 0;
 		virtual void wait_idle() = 0;

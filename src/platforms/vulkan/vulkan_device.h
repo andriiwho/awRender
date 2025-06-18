@@ -23,6 +23,8 @@ namespace aw::render
 		DeviceImage* create_image(DeviceImageCreateInfo&& create_info) override;
 		DeviceImageView* create_image_view(DeviceImage* image, DeviceImageViewCreateInfo&& create_info) override;
 		IRenderPass* create_render_pass(const std::string& debug_name) override;
+		IFrameBuffer* create_frame_buffer(const FrameBufferCreateInfo& create_info) override;
+		ISwapChainFrameBuffer* create_swap_chain_frame_buffer(ISwapChain* swap_chain, IRenderPass* render_pass) override;
 
 		const vk::raii::Device& get_device() const { return m_Device; }
 		const vk::raii::Instance& get_instance() const { return m_Instance; }

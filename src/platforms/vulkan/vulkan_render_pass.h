@@ -17,10 +17,13 @@ namespace aw::render
 
 		void add_pass_image(const PassImageDesc& image_desc) override;
 
+		std::span<const vk::ClearValue> get_clear_values() const { return m_ClearValues; }
+
 	private:
 		std::string m_DebugName{};
 		vk::raii::RenderPass m_RenderPass{nullptr};
 
 		std::vector<PassImageDesc> m_Images{};
+		std::vector<vk::ClearValue> m_ClearValues{};
 	};
 }

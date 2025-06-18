@@ -22,6 +22,9 @@ namespace aw::render
 
 		void copy_buffer(DeviceBuffer* from, DeviceBuffer* to, core::u64 size) override;
 
+		void begin_render_pass(IRenderPass* render_pass, IFrameBuffer* frame_buffer) override;
+		void end_render_pass() override;
+
 	private:
 		vk::raii::CommandBuffer& cmd() { return m_CommandBuffer.at(0); }
 		vk::raii::CommandBuffer& transfer() { return m_CommandBuffer.at(1); }

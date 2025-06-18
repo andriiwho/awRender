@@ -11,6 +11,8 @@ namespace aw::render
 	public:
 		explicit VulkanImageView(DeviceImage* image, DeviceImageViewCreateInfo&& info);
 
+		vk::ImageView get_handle() const { return m_ImageView; }
+
 	private:
 		vk::raii::ImageView m_ImageView{nullptr};
 	};

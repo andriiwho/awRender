@@ -5,6 +5,7 @@
 #include "vulkan_command_list.h"
 #include "vulkan_fence.h"
 #include "vulkan_frame.h"
+#include "vulkan_frame_buffer.h"
 #include "vulkan_image.h"
 #include "vulkan_image_view.h"
 #include "vulkan_queue.h"
@@ -145,6 +146,16 @@ namespace aw::render
 	IRenderPass* VulkanDevice::create_render_pass(const std::string& debug_name)
 	{
 		return aw_new VulkanRenderPass(debug_name);
+	}
+
+	IFrameBuffer* VulkanDevice::create_frame_buffer(const FrameBufferCreateInfo& create_info)
+	{
+		return aw_new VulkanFrameBuffer(create_info);
+	}
+
+	ISwapChainFrameBuffer* VulkanDevice::create_swap_chain_frame_buffer(ISwapChain* swap_chain, IRenderPass* render_pass)
+	{
+		return aw_new VulkanSwapChainFrameBuffer(static_cast<VulkanSwapChain*>(swap_chain), static_cast<VulkanRenderPass*>(render_pass));
 	}
 
 	ISwapChain* VulkanDevice::create_swap_chain(const IRenderWindowInterface& window)
