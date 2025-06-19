@@ -29,6 +29,7 @@ namespace aw::render
 		const vk::raii::Device& get_device() const { return m_Device; }
 		const vk::raii::Instance& get_instance() const { return m_Instance; }
 		const vk::raii::PhysicalDevice& get_physical_device() const { return m_PhysicalDevice; }
+		const vk::raii::PipelineCache& get_pipeline_cache() const { return m_PipelineCache; }
 
 		ISwapChain* create_swap_chain(const IRenderWindowInterface& window) override;
 		core::u32 get_graphics_queue_index() const { return m_GraphicsQueueIndex; }
@@ -43,8 +44,9 @@ namespace aw::render
 		void pick_physical_device(const VulkanWindow* window);
 		void create_device();
 		void init_allocator();
+		void init_pipeline_cache();
 
-		static constexpr core::u32 m_ApiVersion = VK_API_VERSION_1_1;
+		static constexpr core::u32 m_ApiVersion = VK_API_VERSION_1_2;
 
 		vk::raii::Context m_Context{};
 		vk::raii::Instance m_Instance{nullptr};
@@ -53,6 +55,7 @@ namespace aw::render
 
 		vk::raii::PhysicalDevice m_PhysicalDevice{nullptr};
 		vk::raii::Device m_Device{nullptr};
+		vk::raii::PipelineCache m_PipelineCache{nullptr};
 
 		core::u32 m_GraphicsQueueIndex = UINT32_MAX;
 

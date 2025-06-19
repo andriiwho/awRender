@@ -11,8 +11,10 @@ namespace aw::render
 	{
 	public:
 		VulkanShaderModule(std::span<core::u32> byte_code, ShaderStage stage, const std::string& entry_point);
+		vk::ShaderModule get_shader_module() const noexcept { return m_ShaderModule; }
 
 		ShaderStage get_shader_stage() const override { return m_Stage; }
+		std::string_view get_entry_point() const noexcept { return m_EntryPoint; }
 
 	private:
 		vk::raii::ShaderModule m_ShaderModule{nullptr};

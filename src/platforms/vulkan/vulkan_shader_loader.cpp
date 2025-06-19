@@ -215,6 +215,25 @@ namespace aw::render
 		spirv_target_desc.format = SLANG_SPIRV;
 		spirv_target_desc.profile = m_GlobalSession->findProfile("spirv_1_3");
 
+		std::vector<slang::CompilerOptionEntry> options = {
+			{
+				.name = slang::CompilerOptionName::Capability,
+				.value = {
+					.kind = slang::CompilerOptionValueKind::Int,
+					.intValue0 = m_GlobalSession->findCapability("SPV_EXT_descriptor_indexing"),
+				},
+			},
+			{
+				.name = slang::CompilerOptionName::Capability,
+				.value = {
+					.kind = slang::CompilerOptionValueKind::Int,
+					.intValue0 = m_GlobalSession->findCapability("spvRayTracingKHR"),
+				},
+			}
+		};
+		spirv_target_desc.compilerOptionEntries = options.data();
+		spirv_target_desc.compilerOptionEntryCount = static_cast<core::u32>(options.size());
+
 		std::vector<slang::PreprocessorMacroDesc> macros{
 			{ "AW_VULKAN_BACKEND", "1" }
 		};

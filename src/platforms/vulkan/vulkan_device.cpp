@@ -23,7 +23,8 @@ namespace aw::render
 	static constexpr std::array s_required_device_extensions = {
 		VK_KHR_SWAPCHAIN_EXTENSION_NAME,
 		VK_EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME,
-		VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME
+		VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME,
+		VK_KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME,
 	};
 
 	namespace utils
@@ -266,8 +267,13 @@ namespace aw::render
 		for (const auto physical_devices = m_Instance.enumeratePhysicalDevices(); const auto& physical_device : physical_devices)
 		{
 			// Check for bindless
-			const auto features = physical_device.getFeatures2<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceDescriptorIndexingFeatures>();
+			const auto features = physical_device.getFeatures2<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceVulkan11Features, vk::PhysicalDeviceDescriptorIndexingFeatures>();
 			const auto& di_features = features.get<vk::PhysicalDeviceDescriptorIndexingFeatures>();
+			const auto& vk11_features = features.get<vk::PhysicalDeviceVulkan11Features>();
+			if (!vk11_features.shaderDrawParameters)
+			{
+				continue;
+			}
 
 #define check_bool(b)   \
 	if (!di_features.b) \
@@ -368,7 +374,7 @@ namespace aw::render
 		}
 #endif
 
-		const auto features = m_PhysicalDevice.getFeatures2<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceDescriptorIndexingFeatures>();
+		const auto features = m_PhysicalDevice.getFeatures2<vk::PhysicalDeviceFeatures2, vk::PhysicalDeviceVulkan11Features, vk::PhysicalDeviceDescriptorIndexingFeatures>();
 		const auto create_info = vk::DeviceCreateInfo()
 									 .setPNext(&features)
 									 .setQueueCreateInfoCount(1)
@@ -396,5 +402,12 @@ namespace aw::render
 		}
 
 		fmt::println("(awRender) vma allocator created successfully.");
+	}
+
+	void VulkanDevice::init_pipeline_cache()
+	{
+		// TODO: Allow setting of the initial data
+		constexpr auto create_info = vk::PipelineCacheCreateInfo();
+		m_PipelineCache = m_Device.createPipelineCache(create_info);
 	}
 } // namespace aw::render
