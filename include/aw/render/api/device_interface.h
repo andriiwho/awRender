@@ -18,11 +18,12 @@ namespace aw::render
 	class IRenderWindowInterface;
 	class IFrameContext;
 	class IFrameBuffer;
+	class IRenderPipeline;
 	struct DeviceBufferCreateInfo;
 	struct DeviceImageViewCreateInfo;
 	struct RenderPassCreateInfo;
 	struct FrameBufferCreateInfo;
-
+	struct RenderPipelineCreateInfo;
 
 	enum class DeviceQueueType : core::u8
 	{
@@ -42,6 +43,7 @@ namespace aw::render
 		virtual IRenderPass* create_render_pass(const std::string& debug_name) = 0;
 		virtual IFrameBuffer* create_frame_buffer(const FrameBufferCreateInfo& create_info) = 0;
 		virtual ISwapChainFrameBuffer* create_swap_chain_frame_buffer(ISwapChain* swap_chain, IRenderPass* render_pass) = 0;
+		virtual IRenderPipeline* create_render_pipeline(RenderPipelineCreateInfo&& create_info) = 0;
 
 		virtual IFrameContext* create_frame_context() = 0;
 		virtual void wait_idle() = 0;

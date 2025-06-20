@@ -10,6 +10,7 @@
 #include "vulkan_image_view.h"
 #include "vulkan_queue.h"
 #include "vulkan_render_pass.h"
+#include "vulkan_render_pipeline.h"
 #include "vulkan_swap_chain.h"
 #include "vulkan_window.h"
 #include "GLFW/glfw3.h"
@@ -157,6 +158,11 @@ namespace aw::render
 	ISwapChainFrameBuffer* VulkanDevice::create_swap_chain_frame_buffer(ISwapChain* swap_chain, IRenderPass* render_pass)
 	{
 		return aw_new VulkanSwapChainFrameBuffer(static_cast<VulkanSwapChain*>(swap_chain), static_cast<VulkanRenderPass*>(render_pass));
+	}
+
+	IRenderPipeline* VulkanDevice::create_render_pipeline(RenderPipelineCreateInfo&& create_info)
+	{
+		return aw_new VulkanRenderPipeline(std::move(create_info));
 	}
 
 	ISwapChain* VulkanDevice::create_swap_chain(const IRenderWindowInterface& window)

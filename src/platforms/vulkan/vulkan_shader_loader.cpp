@@ -7,7 +7,7 @@
 
 namespace aw::render
 {
-	std::unordered_map<std::string, core::RefPtr<IDeviceShaderModule>> VulkanShaderLoader::m_Shaders;
+	std::unordered_map<VulkanShaderName, core::RefPtr<IDeviceShaderModule>> VulkanShaderLoader::m_Shaders;
 	std::unordered_map<std::string, Slang::ComPtr<slang::IModule>> VulkanShaderLoader::m_LoadedModules;
 
 	thread_local slang::IGlobalSession* VulkanShaderLoader::m_GlobalSession = nullptr;
@@ -106,9 +106,15 @@ namespace aw::render
 
 	IDeviceShaderModule* VulkanShaderLoader::compile_shader(const std::string_view shader_file_path, const std::string_view entry_point, const ShaderStage stage)
 	{
+		const VulkanShaderName name{
+			.shader_file_path = std::string(shader_file_path),
+			.entry_point = std::string(entry_point),
+			.stage = stage
+		};
+
 		{
 			std::lock_guard lock(m_LibraryMutex);
-			if (const auto iter = m_Shaders.find(std::string(shader_file_path)); iter != m_Shaders.end())
+			if (const auto iter = m_Shaders.find(name); iter != m_Shaders.end())
 			{
 				fmt::println("Found shader '{}' with entry point '{}' in cache. Loading...", shader_file_path, entry_point);
 				return iter->second.get();
@@ -171,6 +177,8 @@ namespace aw::render
 				fmt::print("{}\n", static_cast<const char*>(diag_blob->getBufferPointer()));
 			}
 
+			reflect_shader(linked_program, entry_point);
+
 			constexpr SlangInt entry_point_id = 0;
 			constexpr SlangInt target_id = 0;
 			Slang::ComPtr<slang::IBlob> spirv_blob;
@@ -183,7 +191,7 @@ namespace aw::render
 				const std::span byte_code(const_cast<core::u32*>(static_cast<const core::u32*>(spirv_blob->getBufferPointer())), spirv_blob->getBufferSize() / sizeof(core::u32));
 				std::lock_guard lock(m_LibraryMutex);
 				const auto out_shader = aw_new VulkanShaderModule(byte_code, stage, entry_point.data());
-				m_Shaders[std::string(shader_file_path)] = out_shader;
+				m_Shaders[name] = out_shader;
 				return out_shader;
 			}
 
@@ -229,7 +237,14 @@ namespace aw::render
 					.kind = slang::CompilerOptionValueKind::Int,
 					.intValue0 = m_GlobalSession->findCapability("spvRayTracingKHR"),
 				},
-			}
+			},
+			{
+				.name = slang::CompilerOptionName::Capability,
+				.value = {
+					.kind = slang::CompilerOptionValueKind::Int,
+					.intValue0 = m_GlobalSession->findCapability("vk_mem_model"),
+				},
+			},
 		};
 		spirv_target_desc.compilerOptionEntries = options.data();
 		spirv_target_desc.compilerOptionEntryCount = static_cast<core::u32>(options.size());
@@ -238,6 +253,7 @@ namespace aw::render
 			{ "AW_VULKAN_BACKEND", "1" }
 		};
 
+		// TODO: This should be in the compiler init info.
 		std::vector<const char*> search_paths{
 			"shaders://"
 		};
@@ -257,5 +273,42 @@ namespace aw::render
 		{
 			throw std::runtime_error("Failed to create slang session");
 		}
+	}
+
+	void VulkanShaderLoader::reflect_shader(const Slang::ComPtr<slang::IComponentType>& linked_program, const std::string_view entry_point) const
+	{
+		using namespace slang;
+		using namespace Slang;
+
+		ComPtr<ISlangBlob> diag_blob;
+		ProgramLayout* const program_layout = linked_program->getLayout(0, diag_blob.writeRef());
+		if (!program_layout)
+		{
+			using namespace std::string_literals;
+			const std::string diag_str = diag_blob ? std::string(static_cast<const char*>(diag_blob->getBufferPointer())) : "unknown reason."s;
+			throw std::runtime_error(fmt::format("Failed to get program layout: {}. {}", entry_point, diag_str));
+		}
+
+		if (diag_blob)
+		{
+			fmt::print("Shader reflection message: {}\n", static_cast<const char*>(diag_blob->getBufferPointer()));
+		}
+
+		ComPtr<ISlangBlob> blob;
+		program_layout->toJson(blob.writeRef());
+		std::string json_str = static_cast<const char*>(blob->getBufferPointer());
+
+		EntryPointReflection* const entry_point_refl = program_layout->findEntryPointByName(entry_point.data());
+		const SlangUInt parameter_count = entry_point_refl->getParameterCount();
+
+		for (SlangUInt index = 0; index < parameter_count; ++index)
+		{
+			VariableLayoutReflection* const parameter = entry_point_refl->getParameterByIndex(index);
+			const auto name = parameter->getName();
+			const auto binding_index = parameter->getBindingIndex();
+			const auto binding_space = parameter->getBindingSpace();
+			continue;
+		}
+		return;
 	}
 } // namespace aw::render

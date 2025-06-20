@@ -29,6 +29,7 @@ namespace aw::render
 		std::string debug_name{};
 		std::span<IDeviceShaderModule*> shaders{};
 		PrimitiveTopology primitive_topology{};
+		const class IRenderPass* compatible_render_pass{};
 
 		core::usize get_hash_code() const noexcept;
 	};

@@ -110,6 +110,7 @@ i32 testbed_main()
 	};
 
 	const auto vs_shader_module = shader_compiler->compile_shader("shaders://test", "vertex_shader", ShaderStage::vertex);
+	const auto fs_shader_module = shader_compiler->compile_shader("shaders://test", "fragment_shader", ShaderStage::fragment);
 
 	// Create a render pass
 	const RefPtr test_pass = device->create_render_pass("test_pass");
@@ -126,6 +127,15 @@ i32 testbed_main()
 	test_pass->build();
 
 	const RefPtr swap_chain_frame_buffer = device->create_swap_chain_frame_buffer(swap_chain, test_pass);
+
+	IDeviceShaderModule* shaders[] = { vs_shader_module, fs_shader_module };
+	RenderPipelineCreateInfo pipeline_info{
+		.debug_name = "test_pipeline",
+		.shaders = shaders,
+		.primitive_topology = PrimitiveTopology::triangle_list,
+		.compatible_render_pass = test_pass,
+	};
+	const RefPtr pipeline = device->create_render_pipeline(std::move(pipeline_info));
 
 	u32 current_frame = 0;
 	while (true)

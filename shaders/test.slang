@@ -1,6 +1,6 @@
 module main;
 
-import awrender;
+#include "aw_helpers.slang"
 
 struct Vertex
 {
@@ -8,8 +8,12 @@ struct Vertex
     float3 color;
 };
 
-uniform DescriptorHandle<StructuredBuffer<Vertex>> u_VertexBuffer;
-uniform uint u_VertexBufferId;
+struct BindlessParameters
+{
+    StructuredBuffer<Vertex>.Handle vertex_buffer;
+};
+
+ParameterBlock<BindlessParameters> u_BindlessParameters;
 
 struct VSOut
 {
@@ -17,9 +21,15 @@ struct VSOut
 };
 
 [shader("vertex")]
-VSOut vertex_shader(in uint vertex_id : SV_VertexID)
+VSOut vertex_shader(in uint vertex_id : AW_VertexID)
 {
     VSOut out;
-    out.position = float4(u_VertexBuffer[vertex_id].position, 1.0f);
+    out.position = float4(u_BindlessParameters.vertex_buffer[vertex_id].position, 1.0f);
     return out;
+}
+
+[shader("fragment")]
+float4 fragment_shader(in VSOut vs_out) : SV_Target0
+{
+    return float4(1.0f, 0.0f, 0.0f, 1.0f);
 }

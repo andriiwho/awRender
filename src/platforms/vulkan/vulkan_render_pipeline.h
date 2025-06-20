@@ -14,8 +14,17 @@ namespace aw::render
 		core::usize get_hash_code() const override;
 
 	private:
+		void init_bindless_set_layout();
+		void init_bindless_layout();
+
+
 		RenderPipelineCreateInfo m_Info;
-		vk::raii::PipelineLayout m_PipelineLayout{nullptr};
+
+		// TODO: Descriptor set layout must be a global set layout, we literally don't need it to be unique per pipeline.
+		vk::raii::DescriptorSetLayout m_BindlessDescriptorSetLayout{nullptr};
+
+		// TODO: Same for the pipeline layout.
+		vk::raii::PipelineLayout m_BindlessPipelineLayout{nullptr};
 		vk::raii::Pipeline m_Pipeline{nullptr};
 	};
 }
